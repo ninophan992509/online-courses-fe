@@ -1,0 +1,101 @@
+.font-larger {
+  font-size: 5vw;
+}
+
+.login-form {
+  min-width: 480px;
+  margin: 10vh auto;
+  max-width: 30vw;
+  padding-bottom: 100px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+
+
+.input-check.input-group .input-group-text {
+  background: transparent;
+  padding: 0 0.0025rem;
+  border: none;
+}
+
+.input-check.input-group input{
+    width: 20px;
+    height: 20px;
+    margin: .25rem;
+    border: none;
+    color: #f3f7f7;
+}
+
+.forgot-link{
+  width: 50%;
+  word-wrap: none;
+}
+
+.label-text{
+  position: relative;
+  font-size: small;
+  color:#1f15358a;
+  padding: 1rem 1.5rem;
+  display: inline-block;
+  background-color: #fff;
+  z-index: 2;
+}
+
+.social-login .social-login-label {
+  position: relative;
+  margin: 30px 0 20px;
+  color: #1f153541;
+  text-align: center;
+  
+}
+
+.social-login .social-login-label:before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin-top: -.5px;
+  width: 100%;
+  border-top: 1px solid #1f153541;
+  content: "";
+  z-index: 1;
+}
+
+.btn-face{
+  margin-right: 1rem;
+}
+
+.login-form .row.nav.nav-pills{
+  margin: 0 -40px;
+}
+
+.nav-tab.nav-item{
+  margin-top: 0rem;
+}
+
+.nav-tab.nav-item .nav-link{
+  background-color: #f9fbfb;
+  font-weight: 700;
+  font-size: 1.2rem;
+  font-family: 'Work Sans', sans-serif;
+  padding: 0.875rem 1rem;
+  border: none;
+  color: #1f1535!important;
+  text-decoration: none!important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-tab.nav-item .nav-link.active {
+   background-color: #f9fbfb !important;
+}
+
+.nav-tab.nav-item .tab-lg.nav-link.active
+{
+  box-shadow: 6px -6px 16px 0px rgb(0 0 0 / 20%);
+}
+.nav-tab.nav-item .tab-sg.nav-link.active
+{
+  box-shadow: -6px -6px 16px 0px rgb(0 0 0 / 20%);
+}

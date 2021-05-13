@@ -1,13 +1,171 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f3f7f7;
+  font-family: "Raleway", sans-serif;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.box-wrapper {
+  background: #fff;
+  box-shadow: 0 6px 16px 0 rgb(0 0 0 / 20%);
+  border-radius: 7px;
+}
+
+.text-logo {
+  font-family: "Lobster", cursive;
+  font-weight: 400;
+  font-size:larger;
+  color: #1f1535;
+}
+
+.gloomy-dusk {
+  color: #614f87;
+}
+
+.deep-purple {
+  color: #362a51;
+}
+
+.electric-yellow {
+  color: #ffbd3b;
+}
+
+.orange {
+  color: #eb910a;
+}
+
+.mute-gray {
+  color: #d4d7ed;
+}
+
+.vibrant-coal {
+  color: #1f1535;
+}
+
+.input-icon {
+  font-size: 1.5em;
+  padding: 0.75rem;
+  height: 48px;
+  width: 48px;
+  color: #0e141e85;
+}
+
+.wrap-form-input svg {
+  position: absolute;
+}
+
+.wrap-form-input {
+  position: relative;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 6px);
+}
+
+.input-cs {
+  border: 0;
+  border-radius: 0;
+  background-color: #f3f7f7;
+  color: #0e141e;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 6px);
+  padding: 0.45rem 0.95rem;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  font-family: "Work Sans", sans-serif;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-clip: padding-box;
+  border: 2px solid #f3f7f7;
+}
+
+.input-append {
+  width: 100%;
+  text-align: left;
+  padding-left: 48px;
+}
+
+.input-cs:focus,
+.input-cs:hover {
+  border: 2px solid #f3f7f7;
+  border-bottom: 2px solid #ffbd3b;
+  outline: none;
+}
+
+.btn-cs {
+  font-family: "Raleway", sans-serif;
+  display: inline-block;
+  font-weight: 400;
+  color: #1f1535;
+  text-align: center;
+  vertical-align: middle;
+  background-color: transparent;
+  padding: 0.375rem 0.85rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  border-radius: 2px;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary-cs {
+  background-color: #ffbd3b;
+  color: #fff;
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 12px 0 #ffbe3ba1;
+}
+
+.btn-icon{
+  background: transparent;
+  outline: none;
+  border: none;
+  padding: 0;
+  font-size: larger;
+  width: 48px;
+  height: 48px;
+}
+/*flex-define*/
+.flex-center{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between-center {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.w-80 {
+  width: 80%;
+}
+
+a, a:visited{
+  text-decoration: none!important;
+  color:rgb(20, 141, 189)!important;
+}
+
+a:hover{
+  text-decoration: underline!important;
+  color: rgb(13, 95, 150)!important;
+}
+
