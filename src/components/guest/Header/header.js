@@ -5,9 +5,11 @@ import {
   Nav,
   ListGroup,
   InputGroup,
-  Container
+  Container,
 } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
+import { GiShoppingCart } from "react-icons/gi";
 import "./header.css";
 
 const subCategories = [
@@ -87,8 +89,6 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
   );
 };
 
-
-
 function Header() {
   const [cats, setCats] = useState(categories);
   const [subCats, setSubCats] = useState(null);
@@ -143,8 +143,15 @@ function Header() {
               />
             </InputGroup>
             <Nav className="right">
-              <Nav.Link className="nav-link-right">For Teacher</Nav.Link>
-              <button className="btn-cs btn-primary-cs">
+              <div className="wrap-cart">
+                <span className="cart-number">3</span>
+                <button>
+                  <GiShoppingCart />
+                </button>
+              </div>
+              <Link className="nav-link-right flex-center">For Teacher</Link>
+
+              <button className="btn-cs btn-primary-cs btn-login">
                 Log In / Sign Up
               </button>
             </Nav>

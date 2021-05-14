@@ -1,20 +1,38 @@
+.course-list{
+  margin-bottom: 10vw;
+}
+
+.list-title {
+  text-transform: initial;
+  font-weight: 700;
+  color: #fff;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.5rem;
+  font-size: 2rem;
+  background-color: #1f15352e;
+  width: fit-content;
+}
+
 .card-wrap-item {
-  min-width: 240px;
-  max-width: 480px;
   background-color: transparent;
   border-radius: 4px;
   padding: 1rem 0.5rem;
 }
 
-.card-cs {
+.card-cs,
+.card-cs:hover {
   font-family: "Work Sans", sans-serif;
   border: none;
   box-shadow: 0 6px 26px 0 rgb(0 0 0 / 20%);
+  color: inherit;
+  text-decoration: inherit;
 }
 
 .card-btn {
   display: flex;
   flex-shrink: 2;
+  margin-top: 0.5rem;
 }
 
 .card-btn .btn-icon.btn-icon-cs {
@@ -22,8 +40,16 @@
   font-weight: lighter;
 }
 
-.card-btn .btn-cart {
+.card-btn .left,
+.card-btn .right {
   flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-btn div button:hover {
+  box-shadow: 0 6px 16px 0 rgb(0 0 0 / 20%);
 }
 
 .card-cs .card-body {
@@ -56,4 +82,37 @@
 .link-teach:active,
 .link-teach:visited {
   color: #614f87;
+}
+
+.card-price,
+.card-sale {
+  font-size: 1.1rem;
+  color: #362a51;
+}
+
+.card-sale {
+  font-weight: 600;
+}
+
+.card-price {
+  text-decoration: line-through;
+  font-weight: 300;
+  margin-left: 0.5rem;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  font-size: 4vw !important;
+  opacity: 0.85;
+}
+
+.slick-arrow.slick-prev,
+.slick-arrow.slick-next {
+  width: max-content;
+  height: auto;
+  z-index: 2;
+}
+
+.slick-slider.slider-cs.slick-initialized .slick-list {
+  z-index: 1;
 }

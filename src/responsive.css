@@ -1,11 +1,16 @@
-@media screen and (max-width:992px) {
-    #responsive-navbar-nav{
-        align-items: flex-start !important;
-        justify-content: center !important;
-        flex-direction: column-reverse;
-    }
+@media screen and (max-width: 992px) {
+  #responsive-navbar-nav {
+    align-items: flex-start !important;
+    justify-content: center !important;
+    flex-direction: column-reverse;
+  }
 
-    .input-group-search.input-group{
-        padding:1rem 0!important;
-    }
+  .input-group-search.input-group {
+    padding: 1rem 0 !important;
+  }
+
+  .right.navbar-nav .nav-link-right {
+    justify-content: flex-start !important;
+    margin: 1rem 0;
+  }
 }

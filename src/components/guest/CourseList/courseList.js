@@ -1,10 +1,10 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
 import Slider from "react-slick";
 import ImageCustom from "../ImageCustom/imageCustom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { settings } from "./setting";
 import "./courseList.css";
 import { FiShoppingCart } from "react-icons/fi";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
@@ -12,131 +12,81 @@ import { TiStarOutline, TiStarFullOutline } from "react-icons/ti";
 import Rating from "react-rating";
 import numeral from "numeral";
 
-const _courses = [
-  {
-    id: 1,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-  {
-    id: 2,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-  {
-    id: 3,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-  {
-    id: 4,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-  {
-    id: 5,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-  {
-    id: 6,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-  {
-    id: 7,
-    name: "Complete Web Developer Training",
-    teacher_name: "John Taylor",
-    category_name: "Web Development",
-    rating: 4.5,
-    students: 22301,
-    price: 129.99,
-    sale_price: null,
-    image: null,
-  },
-];
+const Course = ({ course }) => {
+  const [liked, setLiked] = useState(false);
 
-function CourseList() {
-  const [courses, setCourses] = useState(_courses);
   return (
-    <Slider {...settings}>
-      {courses &&
-        courses.length > 0 &&
-        courses.map((course, index) => {
-          return (
-            <div className="card-wrap-item">
-              <Card className="card-cs">
-                <ImageCustom src={course.image} height={"140px"} />
-                <Card.Body>
-                  <Card.Title>{course.name}</Card.Title>
-                  <div className="card-rating">
-                    <Rating
-                      emptySymbol={<TiStarOutline />}
-                      fullSymbol={<TiStarFullOutline />}
-                      readonly
-                      initialRating={course.rating}
-                      style={{ fontSize: "1.1rem", color: "#eb910a" }}
-                    />
-                    <small>{` (${numeral(course.students).format(
-                      "000,000,000"
-                    )})`}</small>
-                    <a className="card-link-cs link-cat" href="/">
-                      {course.category_name}
-                    </a>
-                    <a className="card-link-cs link-teach" href="/">
-                      {course.teacher_name}
-                    </a>
-                  </div>
-                  <div className="card-btn">
-                    <btn className="btn-icon btn-icon-cs btn-cart">
-                      <FiShoppingCart />
-                    </btn>
-                    <btn className="btn-icon btn-icon-cs btn-like">
-                      <AiOutlineHeart />
-                    </btn>
-                  </div>
-                </Card.Body>
-              </Card>
+    <div className="card-wrap-item">
+      <Link className="card card-cs " to={`/course?id=${course.id}`}>
+        <ImageCustom src={course.image} height={"140px"} borderRadius="4px" />
+        <Card.Body>
+          <Card.Title>{course.name}</Card.Title>
+          <div className="card-rating">
+            <Rating
+              emptySymbol={<TiStarOutline />}
+              fullSymbol={<TiStarFullOutline />}
+              readonly
+              initialRating={course.rating}
+              style={{ fontSize: "1.1rem", color: "#eb910a" }}
+            />
+            <small>{` (${numeral(course.students).format(
+              "000,000,000"
+            )})`}</small>
+            <Link
+              className="card-link-cs link-cat"
+              to={`/course?category=${course.id}`}
+            >
+              {course.category_name}
+            </Link>
+            <Link
+              className="card-link-cs link-teach"
+              to={`/teacher?id=${course.teacher_id}`}
+            >
+              {course.teacher_name}
+            </Link>
+          </div>
+          <div className="flex-end-center">
+            {course.sale_price && (
+              <span className="card-sale">${course.sale_price}</span>
+            )}
+            <span className={course.sale_price ? "card-price" : "card-sale"}>
+              ${course.price}
+            </span>
+          </div>
+          <div className="card-btn">
+            <div className="left">
+              <button
+                className="btn-icon btn-icon-cs btn-like"
+                onClick={() => setLiked(!liked)}
+              >
+                {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
+              </button>
             </div>
-          );
-        })}
-    </Slider>
+            <div className="right">
+              <button className="btn-icon btn-icon-cs btn-cart">
+                <FiShoppingCart />
+              </button>
+            </div>
+          </div>
+        </Card.Body>
+      </Link>
+    </div>
+  );
+};
+
+function CourseList({ title, settings, courses }) {
+  // const [courses, setCourses] = useState(_courses);
+  return (
+    <div className="course-list">
+      {title && <div className="list-title">{title}</div>}
+      <Slider {...settings} className="slider-cs">
+        {courses &&
+          courses.length > 0 &&
+          courses.map((course, index) => {
+            return <Course course={course} key={index} />;
+          })}
+      </Slider>
+    </div>
   );
 }
 

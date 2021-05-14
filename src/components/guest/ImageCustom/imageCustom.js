@@ -7,6 +7,10 @@ const WrapImage = styled.div`
   background: ${(props) => props.background || "#fff"};
   border: ${(props) => props.border || "none"};
   border-radius: ${(props) => props.borderRadius || "0"};
+
+  &:before {
+    padding-bottom: 56.25%;
+  }
 `;
 
 const Image = styled.img`

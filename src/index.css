@@ -8,8 +8,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f3f7f7;
-  font-family: "Raleway", sans-serif;
+  /*background: #f3f7f7 !important;*/
+  background: #eb910a !important;
+  font-family: "Raleway", sans-serif !important;
 }
 
 code {
@@ -26,7 +27,7 @@ code {
 .text-logo {
   font-family: "Lobster", cursive;
   font-weight: 400;
-  font-size:larger;
+  font-size: larger;
   color: #1f1535;
 }
 
@@ -127,16 +128,15 @@ code {
   box-shadow: 0 4px 12px 0 #ffbe3ba1;
 }
 
-.btn-primary-cs:hover{
+.btn-primary-cs:hover {
   box-shadow: 0 8px 12px 0 #ffbe3ba1;
 }
 
-.btn-primary-cs:active{
+.btn-primary-cs:active {
   box-shadow: 0 4px 12px 0 #eb910a;
 }
 
-
-.btn-icon{
+.btn-icon {
   background: transparent;
   outline: none;
   border: none;
@@ -144,19 +144,21 @@ code {
   font-size: larger;
   width: 48px;
   height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-icon-cs:hover{
+.btn-icon-cs:hover {
   width: 48px;
   height: 48px;
-  
 }
 
 /*flex-define*/
-.flex-center{
- display: flex;
- justify-content: center;
- align-items: center;
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flex-column-center {
@@ -172,24 +174,35 @@ code {
   justify-content: space-between;
 }
 
+.flex-end-center {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.flex-start-center {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .w-80 {
   width: 80%;
 }
 
-a, a:visited{
+a,
+a:visited {
   text-decoration: none;
-  
 }
 
-a:hover{
+a:hover {
   text-decoration: underline;
 }
 
-
-.ml-auto{
-  margin-left: auto!important;
+.ml-auto {
+  margin-left: auto !important;
 }
 
-.mr-auto{
-  margin-right: auto!important;
+.mr-auto {
+  margin-right: auto !important;
 }
