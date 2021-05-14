@@ -30,6 +30,12 @@
 .forgot-link{
   width: 50%;
   word-wrap: none;
+  color:rgb(20, 141, 189) !important;
+  text-decoration: none!important;
+}
+
+.forgot-link:hover, .forgot-link:active{
+  color: rgb(13, 95, 150) !important;
 }
 
 .label-text{

@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  InputGroup,
-  FormControl,
-  Tab,
-  Tabs,
-  Nav
-} from "react-bootstrap";
+import { Container, InputGroup, Tab, Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./auth.css";
 import { BiUser } from "react-icons/bi";
@@ -48,7 +40,9 @@ export function Login() {
               Forgot password?
             </a>
           </div>
-          <button className="btn-cs btn-primary-cs"> Log In</button>
+          <div className="mt-2">
+            <button className="btn-cs btn-primary-cs"> Log In</button>
+          </div>
         </div>
       </form>
       <div className="social-login">
@@ -98,7 +92,9 @@ export function Register() {
               placeholder="Your password"
             />
           </div>
-          <button className="btn-cs btn-primary-cs">Create account</button>
+          <div className="mt-2">
+            <button className="btn-cs btn-primary-cs">Create account</button>
+          </div>
         </div>
       </form>
       <div className="social-login">
@@ -126,10 +122,14 @@ const Auth = () => {
         <Tab.Container id="tabs-auth" defaultActiveKey="login">
           <Nav variant="pills" className="row">
             <Nav.Item className="col-6 nav-tab">
-              <Nav.Link className="tab-lg" eventKey="login">Log In</Nav.Link>
+              <Nav.Link className="tab-lg" eventKey="login">
+                Log In
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item className="col-6 nav-tab">
-              <Nav.Link  className="tab-sg" eventKey="signup">Sign Up</Nav.Link>
+              <Nav.Link className="tab-sg" eventKey="signup">
+                Sign Up
+              </Nav.Link>
             </Nav.Item>
           </Nav>
           <Tab.Content>

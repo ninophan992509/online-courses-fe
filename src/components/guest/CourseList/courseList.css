@@ -1,0 +1,59 @@
+.card-wrap-item {
+  min-width: 240px;
+  max-width: 480px;
+  background-color: transparent;
+  border-radius: 4px;
+  padding: 1rem 0.5rem;
+}
+
+.card-cs {
+  font-family: "Work Sans", sans-serif;
+  border: none;
+  box-shadow: 0 6px 26px 0 rgb(0 0 0 / 20%);
+}
+
+.card-btn {
+  display: flex;
+  flex-shrink: 2;
+}
+
+.card-btn .btn-icon.btn-icon-cs {
+  font-size: 1.5rem;
+  font-weight: lighter;
+}
+
+.card-btn .btn-cart {
+  flex-grow: 1;
+}
+
+.card-cs .card-body {
+  padding: 0.25rem 0.5rem;
+}
+
+.card-cs .card-title {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  max-height: 43px;
+  overflow: hidden;
+}
+
+.card-link-cs {
+  text-decoration: none;
+  display: block;
+  font-size: small;
+}
+
+.link-cat,
+.link-cat:hover,
+.link-cat:active,
+.link-cat:visited {
+  color: #362a51;
+  font-weight: 600;
+}
+
+.link-teach,
+.link-teach:hover,
+.link-teach:active,
+.link-teach:visited {
+  color: #614f87;
+}

@@ -105,12 +105,13 @@ code {
 .btn-cs {
   font-family: "Raleway", sans-serif;
   display: inline-block;
+  min-width: max-content;
   font-weight: 400;
   color: #1f1535;
   text-align: center;
   vertical-align: middle;
   background-color: transparent;
-  padding: 0.375rem 0.85rem;
+  padding: 0.375rem 1rem;
   font-size: 1.2rem;
   line-height: 1.5;
   border-radius: 2px;
@@ -126,6 +127,15 @@ code {
   box-shadow: 0 4px 12px 0 #ffbe3ba1;
 }
 
+.btn-primary-cs:hover{
+  box-shadow: 0 8px 12px 0 #ffbe3ba1;
+}
+
+.btn-primary-cs:active{
+  box-shadow: 0 4px 12px 0 #eb910a;
+}
+
+
 .btn-icon{
   background: transparent;
   outline: none;
@@ -135,6 +145,13 @@ code {
   width: 48px;
   height: 48px;
 }
+
+.btn-icon-cs:hover{
+  width: 48px;
+  height: 48px;
+  
+}
+
 /*flex-define*/
 .flex-center{
  display: flex;
@@ -160,12 +177,19 @@ code {
 }
 
 a, a:visited{
-  text-decoration: none!important;
-  color:rgb(20, 141, 189)!important;
+  text-decoration: none;
+  
 }
 
 a:hover{
-  text-decoration: underline!important;
-  color: rgb(13, 95, 150)!important;
+  text-decoration: underline;
 }
 
+
+.ml-auto{
+  margin-left: auto!important;
+}
+
+.mr-auto{
+  margin-right: auto!important;
+}
