@@ -18,7 +18,11 @@ const Course = ({ course }) => {
   return (
     <div className="card-wrap-item">
       <Link className="card card-cs " to={`/course?id=${course.id}`}>
-        <ImageCustom src={course.image} height={"140px"} borderRadius="4px" />
+        <ImageCustom
+          className="card-img-cs"
+          src={course.image}
+          borderRadius="2px"
+        />
         <Card.Body>
           <Card.Title>{course.name}</Card.Title>
           <div className="card-rating">

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import CourseList from "../CourseList/courseList";
+import CatList from "../CatList/catList";
 import { settings4, settings5 } from "../../../configs/carousel-responsive";
 
 const _courses = [
@@ -89,21 +90,73 @@ const _courses = [
   },
 ];
 
+const _cats = [
+  {
+    id: 1,
+    name: "Design",
+    students: 656300,
+  },
+  {
+    id: 2,
+    name: "Development",
+    students: 556300,
+  },
+  {
+    id: 3,
+    name: "Marketing",
+    students: 456300,
+  },
+  {
+    id: 4,
+    name: "IT and software",
+    students: 356300,
+  },
+  {
+    id: 5,
+    name: "Personal Development",
+    students: 256300,
+  },
+  {
+    id: 6,
+    name: "Business",
+    students: 156300,
+  },
+  {
+    id: 7,
+    name: "Photography",
+    students: 56300,
+  },
+  {
+    id: 8,
+    name: "Music",
+    students: 6300,
+  },
+];
+
 function HomePage() {
+  const [bestCourses, setBestCourses] = useState(_courses);
+  const [lastedCourses, setLastedCourses] = useState(_courses);
+  const [viewedCourses, setViewedCourses] = useState(_courses);
+  const [bestCats, setBestCats] = useState(_cats);
+
   return (
     <>
       <CourseList
-        courses={_courses}
+        courses={bestCourses}
         settings={settings4}
         title={"Top outstanding courses"}
       />
+      <CatList
+        categories={bestCats}
+        title={"Top most categories chosen by students in the week"}
+      />
       <CourseList
-        courses={_courses}
+        courses={lastedCourses}
         settings={settings5}
         title={"Top lasted courses"}
       />
       <CourseList
-        courses={_courses}
+        courses={viewedCourses}
         settings={settings5}
         title={"Top most viewed courses"}
       />

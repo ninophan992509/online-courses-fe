@@ -148,11 +148,6 @@
   transition-duration: 0.5s;
 }
 
-#responsive-navbar-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
 .wrap-cart button {
   font-size: 1.5rem;

@@ -112,8 +112,8 @@ function Header() {
           <Navbar.Brand href="#home" className="text-logo">
             Novus
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
+          <Navbar.Toggle aria-controls="res-navbar-nav" />
+          <Navbar.Collapse id="res-navbar-nav" as="div">
             <Nav className="left">
               <NavDropdown
                 title="Categories"

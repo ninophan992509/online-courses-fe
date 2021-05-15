@@ -1,0 +1,47 @@
+.cat-wrap-list {
+  margin-top: 1rem;
+  margin-bottom: 10vw;
+}
+
+.cat-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cat-list .cat-item {
+  flex: 0 0 calc(33.33% - 1px);
+  border-right: 1px solid #e7eeef;
+  border-bottom: 1px solid #e7eeef;
+  font-size: 18px;
+  padding: 1rem;
+}
+
+.cat-list .cat-item .cat-link {
+  text-decoration: none;
+  height: 100%;
+  width: 100%;
+}
+
+.cat-list .cat-item:hover {
+  box-shadow: 0 6px 16px 0 rgb(0 0 0 / 20%);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.cat-list .cat-item .cat-link .cat-name {
+  font-weight: bold;
+  text-transform: capitalize;
+  color: #362a51;
+  font-size: 1.3rem;
+}
+
+.cat-list .cat-item .cat-link .cat-students {
+  font-size: 0.98rem;
+  color: #614f87;
+}
+
+.cat-list .cat-item .cat-link .cat-students span {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}

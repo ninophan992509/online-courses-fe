@@ -116,3 +116,17 @@
 .slick-slider.slider-cs.slick-initialized .slick-list {
   z-index: 1;
 }
+
+
+.card-img-cs{
+   position: relative;
+   padding-top: 56.25%;
+}
+
+.card-img-cs img{
+   position:  absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+}
