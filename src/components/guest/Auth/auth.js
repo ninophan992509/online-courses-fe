@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, InputGroup, Tab, Nav } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./auth.css";
 import { BiUser } from "react-icons/bi";
 import { RiLockPasswordLine } from "react-icons/ri";

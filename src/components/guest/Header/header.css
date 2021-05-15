@@ -126,6 +126,10 @@
   width: 20vw;
 }
 
+.right.navbar-nav{
+  margin-left: auto;
+}
+
 .right.navbar-nav .nav-link-right {
   font-family: "Raleway", sans-serif;
   color: #fff !important;
@@ -147,7 +151,6 @@
   transform: translateY(-2px);
   transition-duration: 0.5s;
 }
-
 
 .wrap-cart button {
   font-size: 1.5rem;
@@ -181,4 +184,53 @@
   justify-content: center;
   align-items: center;
   padding-bottom: 0.25rem;
+}
+
+.dropdown-profile button,
+.dropdown-profile button:hover,
+.dropdown-profile button:active,
+.dropdown-profile button:visited,
+.dropdown-profile button:focus {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdown-profile button svg {
+  margin-right: 0.15rem;
+  font-size: 1.7rem;
+}
+
+.dropdown-profile button:hover {
+  font-weight: 600 !important;
+}
+
+.dropdown-profile .dropdown-menu {
+  border-radius: 0;
+  text-decoration: none;
+  padding: 0;
+}
+
+.dropdown-profile .dropdown-item,
+.dropdown-profile .dropdown-item:hover,
+.dropdown-profile .dropdown-item:focus,
+.dropdown-profile .dropdown-item:active,
+.dropdown-profile .dropdown-item:visited {
+  text-decoration: none;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #1f153575;
+  border-top: 1px solid #1f153575;
+}
+
+.dropdown-profile .dropdown-item:hover,
+.dropdown-profile .dropdown-item:focus,
+.dropdown-profile .dropdown-item:active,
+.dropdown-profile .dropdown-item:visited {
+  color: #1e2125 !important;
+  background-color: #e9ecef !important;
+  font-weight: 700;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Navbar,
   NavDropdown,
@@ -6,11 +6,14 @@ import {
   ListGroup,
   InputGroup,
   Container,
+  Dropdown,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { GiShoppingCart } from "react-icons/gi";
+import { FiUser } from "react-icons/fi";
 import "./header.css";
+import { authContext } from "../../../contexts/AuthContext";
 
 const subCategories = [
   {
@@ -92,6 +95,9 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
 function Header() {
   const [cats, setCats] = useState(categories);
   const [subCats, setSubCats] = useState(null);
+  const { auth } = useContext(authContext);
+  const { user, role, cart } = auth;
+
   const handleHoverItem = (id) => {
     if (cats && cats.length > 0) {
       const fCat = cats.find((cat) => cat.id === id);
@@ -110,50 +116,90 @@ function Header() {
       >
         <Container>
           <Navbar.Brand href="#home" className="text-logo">
-            Novus
+            <span>{"Novus"}</span>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="res-navbar-nav" />
           <Navbar.Collapse id="res-navbar-nav" as="div">
-            <Nav className="left">
-              <NavDropdown
-                title="Categories"
-                id="nav-dropdown"
-                className="dropdown-category"
-              >
-                <NavDropdown.Item as="div" className="dropdown-wrap-list">
-                  <CategoryList
-                    cats={cats}
-                    handleHoverItem={handleHoverItem}
-                    variant="primary"
-                  />{" "}
-                  <CategoryList cats={subCats} variant="secondary" />
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-            <InputGroup className="input-group-search">
-              <button className="input-group-prepend">
-                <BsSearch />
-              </button>
-              <input
-                aria-label="search"
-                aria-describedby="search"
-                type="text"
-                className="input-form-search form-control"
-                placeholder="Search"
-              />
-            </InputGroup>
-            <Nav className="right">
-              <div className="wrap-cart">
-                <span className="cart-number">3</span>
-                <button>
-                  <GiShoppingCart />
-                </button>
-              </div>
-              <Link className="nav-link-right flex-center">For Teacher</Link>
+            {role !== "teacher" && role !== "admin" && (
+              <>
+                <Nav className="left">
+                  <NavDropdown
+                    title="Categories"
+                    id="nav-dropdown"
+                    className="dropdown-category"
+                  >
+                    <NavDropdown.Item as="div" className="dropdown-wrap-list">
+                      <CategoryList
+                        cats={cats}
+                        handleHoverItem={handleHoverItem}
+                        variant="primary"
+                      />{" "}
+                      <CategoryList cats={subCats} variant="secondary" />
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </Nav>
+                <InputGroup className="input-group-search">
+                  <button className="input-group-prepend">
+                    <BsSearch />
+                  </button>
+                  <input
+                    aria-label="search"
+                    aria-describedby="search"
+                    type="text"
+                    className="input-form-search form-control"
+                    placeholder="Search"
+                  />
+                </InputGroup>
+              </>
+            )}
 
-              <button className="btn-cs btn-primary-cs btn-login">
-                Log In / Sign Up
-              </button>
+            <Nav className="right">
+              {role !== "teacher" && role !== "admin" && (
+                <div className="wrap-cart">
+                  <span className="cart-number">{cart ? cart.length : 0}</span>
+                  <button>
+                    <GiShoppingCart />
+                  </button>
+                </div>
+              )}
+
+              {!user && (
+                <>
+                  <Link className="nav-link-right flex-center">
+                    For Teacher
+                  </Link>
+                  <button className="btn-cs btn-primary-cs btn-login">
+                    Log In / Sign Up
+                  </button>
+                </>
+              )}
+
+              {user && (
+                <Dropdown className="dropdown-profile">
+                  <Dropdown.Toggle>
+                    <FiUser />
+                    {user.name}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Link className="dropdown-item" to="/profile">
+                      Profile
+                    </Link>
+                    {role === "student" && (
+                      <>
+                      <Link className="dropdown-item" to="/watch-list">
+                        Watch List
+                      </Link> 
+                      <Link className="dropdown-item" to="/student-courses">
+                          My Courses
+                      </Link>
+                        </>
+                    )}
+                    <Link className="dropdown-item" to="/logout">
+                      Log Out
+                    </Link>
+                  </Dropdown.Menu>
+                </Dropdown>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
