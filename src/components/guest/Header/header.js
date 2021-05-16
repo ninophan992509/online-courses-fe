@@ -8,7 +8,7 @@ import {
   Container,
   Dropdown,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { GiShoppingCart } from "react-icons/gi";
 import { FiUser } from "react-icons/fi";
@@ -95,7 +95,7 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
 function Header() {
   const [cats, setCats] = useState(categories);
   const [subCats, setSubCats] = useState(null);
-  const { auth } = useContext(authContext);
+  const { auth, setAuth } = useContext(authContext);
   const { user, role, cart } = auth;
 
   const handleHoverItem = (id) => {
@@ -105,6 +105,12 @@ function Header() {
     }
   };
 
+  const handleLogOut = () => {
+    setAuth({ ...auth, user: null, role: "guest" });
+  };
+
+  const location = useLocation();
+  if (location.pathname === "/auth") return null;
   return (
     <>
       <Navbar
@@ -165,12 +171,19 @@ function Header() {
 
               {!user && (
                 <>
-                  <Link className="nav-link-right flex-center">
+                  <Link
+                    className="nav-link-right flex-center"
+                    to={`/auth?_ref=teacher`}
+                  >
                     For Teacher
                   </Link>
-                  <button className="btn-cs btn-primary-cs btn-login">
+                  <Link
+                    className="btn-cs btn-primary-cs btn-login"
+                    role="button"
+                    to={`/auth?_ref=student`}
+                  >
                     Log In / Sign Up
-                  </button>
+                  </Link>
                 </>
               )}
 
@@ -186,15 +199,19 @@ function Header() {
                     </Link>
                     {role === "student" && (
                       <>
-                      <Link className="dropdown-item" to="/watch-list">
-                        Watch List
-                      </Link> 
-                      <Link className="dropdown-item" to="/student-courses">
+                        <Link className="dropdown-item" to="/watch-list">
+                          Watch List
+                        </Link>
+                        <Link className="dropdown-item" to="/student-courses">
                           My Courses
-                      </Link>
-                        </>
+                        </Link>
+                      </>
                     )}
-                    <Link className="dropdown-item" to="/logout">
+                    <Link
+                      className="dropdown-item"
+                      role="button"
+                      onClick={() => handleLogOut()}
+                    >
                       Log Out
                     </Link>
                   </Dropdown.Menu>

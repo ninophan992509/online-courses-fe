@@ -103,6 +103,28 @@ code {
   outline: none;
 }
 
+.border-cs-success,
+.border-cs-success:hover {
+  border-bottom: 2px solid #2aaf26;
+}
+
+.border-cs-danger,
+.border-cs-danger:hover {
+  border-bottom: 2px solid #ff3b45;
+}
+
+.alert-cs-success {
+  background-color: #41ff3b28;
+  color: #2aaf26;
+  font-weight: 600;
+}
+
+.alert-cs-danger {
+  background-color: #ff3b4528;
+  color: #ff3b45;
+  font-weight: 600;
+}
+
 .btn-cs {
   font-family: "Raleway", sans-serif;
   display: inline-block;
@@ -130,6 +152,9 @@ code {
 
 .btn-primary-cs:hover {
   box-shadow: 0 8px 12px 0 #ffbe3ba1;
+  transform: translateY(-2px);
+  transition-duration: 0.3s;
+  animation: transform 0.3s ease-in-out;
 }
 
 .btn-primary-cs:active {
