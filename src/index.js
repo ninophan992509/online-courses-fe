@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import "./responsive.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../node_modules/video-react/dist/video-react.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router } from "react-router-dom";

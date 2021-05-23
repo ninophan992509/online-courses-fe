@@ -32,14 +32,14 @@ function RatingChart({ chart, total }) {
             <Rating
               emptySymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#E7E7E7"
                 />
               }
               fullSymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#57E32C"
                 />
@@ -59,14 +59,14 @@ function RatingChart({ chart, total }) {
             <Rating
               emptySymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#E7E7E7"
                 />
               }
               fullSymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#B7DD29"
                 />
@@ -86,14 +86,14 @@ function RatingChart({ chart, total }) {
             <Rating
               emptySymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#E7E7E7"
                 />
               }
               fullSymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#FFE234"
                 />
@@ -113,14 +113,14 @@ function RatingChart({ chart, total }) {
             <Rating
               emptySymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#E7E7E7"
                 />
               }
               fullSymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#FFA534"
                 />
@@ -140,14 +140,14 @@ function RatingChart({ chart, total }) {
             <Rating
               emptySymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#E7E7E7"
                 />
               }
               fullSymbol={
                 <RectangleFill
-                  width="10vw"
+                  width="9vw"
                   height="20px"
                   backgroundColor="#FF4545"
                 />

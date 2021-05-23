@@ -126,6 +126,44 @@ export const _course = {
       ratings: 820,
     },
   ],
+  reviews: [
+    {
+      id: 1,
+      user_id: 1,
+      user_name: "Pedro Fiuza Linhares",
+      rating: 5,
+      review_at: new Date(),
+      content:
+        "think this course is very perfect. It introduces everything for kubernetes. Such as routing, networking, security, cloud construction, etc. I learnt lots knowledges. Thank you so much @Edward for this excellent lesson.",
+    },
+    {
+      id: 2,
+      user_id: 1,
+      user_name: "Pedro Fiuza Linhares",
+      rating: 5,
+      review_at: new Date(),
+      content:
+        "think this course is very perfect. It introduces everything for kubernetes. Such as routing, networking, security, cloud construction, etc. I learnt lots knowledges. Thank you so much @Edward for this excellent lesson.",
+    },
+    {
+      id: 3,
+      user_id: 1,
+      user_name: "Pedro Fiuza Linhares",
+      rating: 5,
+      review_at: new Date(),
+      content:
+        "think this course is very perfect. It introduces everything for kubernetes. Such as routing, networking, security, cloud construction, etc. I learnt lots knowledges. Thank you so much @Edward for this excellent lesson.",
+    },
+    {
+      id: 4,
+      user_id: 1,
+      user_name: "Pedro Fiuza Linhares",
+      rating: 5,
+      review_at: new Date(),
+      content:
+        "think this course is very perfect. It introduces everything for kubernetes. Such as routing, networking, security, cloud construction, etc. I learnt lots knowledges. Thank you so much @Edward for this excellent lesson.",
+    },
+  ],
 };
 
 export const _courses = [

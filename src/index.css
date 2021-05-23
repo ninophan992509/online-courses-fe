@@ -18,6 +18,12 @@ code {
     monospace;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .box-wrapper {
   background: #fff;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 20%);
@@ -161,11 +167,11 @@ code {
   box-shadow: 0 4px 12px 0 #eb910a;
 }
 
-.btn-light-cs{
+.btn-light-cs {
   background-color: #fff;
-  color:#ffbd3b ;
+  color: #ffbd3b;
   border: 2px solid #ffbd3b;
-  padding: .225rem 1rem;
+  padding: 0.225rem 1rem;
   outline: none;
   font-weight: 600;
 }
@@ -252,15 +258,15 @@ a:hover {
   margin-right: auto !important;
 }
 
-.ml-2{
+.ml-2 {
   margin-left: 1rem;
 }
 
-.mr-2{
+.mr-2 {
   margin-right: 1rem;
 }
 
-.p-2{
+.p-2 {
   padding: 1rem;
 }
 
@@ -277,6 +283,6 @@ a:hover {
   right: 0;
 }
 
-.text-number{
-  font-family: 'Work Sans'!important;
+.text-number {
+  font-family: "Work Sans" !important;
 }

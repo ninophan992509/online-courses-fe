@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Row, Col, Card, Table, Accordion, Button } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Card, Table, Accordion, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Player } from "video-react";
 import ImageCustom from "../ImageCustom/imageCustom";
 import { FiShoppingCart } from "react-icons/fi";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
@@ -11,11 +12,13 @@ import { FaDiscourse } from "react-icons/fa";
 import { RiVideoLine } from "react-icons/ri";
 import Rating from "react-rating";
 import numeral from "numeral";
+import moment from "moment";
 import "./course.css";
-import { _course } from "../HomePage/data";
+import { _course, _courses } from "../HomePage/data";
 import RatingChart from "../RatingChart/ratingChart";
+import { Course as SingleCourse } from "../CourseList/courseList";
 
-const Lectures = ({ lectures }) => {
+const Lectures = ({ lectures, onShowPreview }) => {
   return (
     <div className="course-lecture">
       {lectures &&
@@ -30,7 +33,14 @@ const Lectures = ({ lectures }) => {
                 <RiVideoLine />
               </span>
               <span className="course-wrap-name">
-                <span className={`course-lecture-name`}>{lecture.name}</span>
+                <span
+                  className={`course-lecture-name`}
+                  onClick={
+                    lecture.preview ? () => onShowPreview(lecture) : () => {}
+                  }
+                >
+                  {lecture.name}
+                </span>
                 <span>{numeral(lecture.duration).format("00:00")}</span>
               </span>
             </Card.Body>
@@ -40,9 +50,62 @@ const Lectures = ({ lectures }) => {
   );
 };
 
+const VideoModal = (props) => {
+  const { handleClose, lecture } = props;
+  const [link, setLink] = useState(
+    '"https://media.w3.org/2010/05/sintel/trailer_hd.mp4"'
+  );
+  
+  useEffect(() => {
+    if (lecture) {
+      setLink(lecture.link);
+    }
+  }, [lecture]);
+
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {lecture ? lecture.name : ""}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Player playsInline poster="/assets/poster.png" src={link} />
+      </Modal.Body>
+      <Modal.Footer>
+        <button className="btn-cs btn-primary-cs" onClick={handleClose}>
+          Close
+        </button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
 function Course() {
   const [liked, setLiked] = useState(false);
   const [course, setCourse] = useState(_course);
+  const [courses, setCourses] = useState(_courses);
+  const [show, setShow] = useState(false);
+  const [lecture, setLecture] = useState(null);
+
+  const handleShow = () => {
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const onShowPreview = (lecture) => {
+    setLecture(lecture);
+    setShow(true);
+  };
+
   const calcLecturesDurationTotal = (lectures) => {
     if (lectures) {
       let total = 0;
@@ -56,6 +119,12 @@ function Course() {
 
   return (
     <>
+      <VideoModal
+        show={show}
+        handleShow={handleShow}
+        handleClose={handleClose}
+        lecture={lecture}
+      />
       <div className="course-head">
         <Row className="course-row-head">
           <Col md="8" className="left">
@@ -225,7 +294,10 @@ function Course() {
                       ).format("00:00")}`}</div>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey={index + 1}>
-                      <Lectures lectures={section.lectures} />
+                      <Lectures
+                        lectures={section.lectures}
+                        onShowPreview={onShowPreview}
+                      />
                     </Accordion.Collapse>
                   </Card>
                 );
@@ -236,7 +308,7 @@ function Course() {
       <div className="course-body">
         <div className="course-feedback">
           <div className="flex-start-center">
-            <div className="flex-column-center">
+            <div className="course-rating-point">
               <span className="text-rating-number">{course.rating}</span>
               <Rating
                 emptySymbol={<TiStarOutline />}
@@ -247,10 +319,58 @@ function Course() {
               />
               <span>{"Course Rating"}</span>
             </div>
-            <div>
+            <div className="course-rating-chart">
               <RatingChart chart={course.rating_chart} total={course.ratings} />
             </div>
           </div>
+          <div className="course-review">
+            {course.reviews &&
+              course.reviews.map((review, index) => {
+                return (
+                  <div className="course-review-item">
+                    <span className="course-wrap-review-img">
+                      <ImageCustom
+                        width="48px"
+                        height="48px"
+                        borderRadius="50%"
+                      />
+                    </span>
+                    <div className="">
+                      <div>{review.user_name}</div>
+                      <div>
+                        <Rating
+                          emptySymbol={<TiStarOutline />}
+                          fullSymbol={<TiStarFullOutline />}
+                          readonly
+                          initialRating={review.rating}
+                          style={{ fontSize: "1.1rem", color: "#eb910a" }}
+                        />{" "}
+                        <small>{`  ${moment(
+                          review.review_at
+                        ).fromNow()}`}</small>
+                      </div>
+                      <div>{review.content}</div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+          <div className="flex-center mt-2">
+            <button className="btn-cs btn-primary-cs">Show more reviews</button>
+          </div>
+        </div>
+      </div>
+      <div className="course-body">
+        <h3>Top purchased courses in same field</h3>
+        <div className="top-purchased-courses">
+          {courses &&
+            courses.slice(0, 5).map((course, index) => {
+              return (
+                <div className="card-wrap-item">
+                  <SingleCourse key={index} course={course} />
+                </div>
+              );
+            })}
         </div>
       </div>
     </>
