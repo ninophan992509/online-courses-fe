@@ -1,0 +1,39 @@
+
+.list-search {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: flex-start;
+
+}
+
+.list-search .card-wrap-item {
+  max-width: 100%;
+  max-width: 25%;
+}
+
+.select-sort{
+  width: max-content;
+  padding: .5rem;
+  position: relative;
+}
+
+.select-sort::after{
+    display: inline-block;
+    margin-left: .255em;
+    vertical-align: .255em;
+    content: "";
+    border-top: .3em solid;
+    border-right: .3em solid transparent;
+    border-bottom: 0;
+    border-left: .3em solid transparent;
+    position: absolute;
+    top: 45%;
+    right: 1rem;
+}
+
+.select-sort .form-control{
+  padding-right: 2rem;
+}

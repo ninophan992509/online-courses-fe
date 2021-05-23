@@ -418,7 +418,7 @@ const Auth = () => {
                 Log In
               </Nav.Link>
             </Nav.Item>
-            {_ref !== "admin" && (
+            {_ref === "student" && (
               <Nav.Item className="col-6 nav-tab">
                 <Nav.Link className="tab-sg" eventKey="signup">
                   Sign Up

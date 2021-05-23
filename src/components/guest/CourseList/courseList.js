@@ -12,19 +12,27 @@ import { TiStarOutline, TiStarFullOutline } from "react-icons/ti";
 import Rating from "react-rating";
 import numeral from "numeral";
 
-const Course = ({ course }) => {
+export const Course = ({ course }) => {
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="card-wrap-item">
-      <Link className="card card-cs " to={`/course?id=${course.id}`}>
+    <>
+      <div className="card card-cs ">
+        {(course.new || course.best_seller) && (
+          <span className={`card-badge ${course.new ? "new" : "best-seller"}`}>
+            {course.new ? "New" : "Best seller"}
+          </span>
+        )}
+
         <ImageCustom
-          className="card-img-cs"
+          className="card-16-9"
           src={course.image}
           borderRadius="2px"
         />
         <Card.Body>
-          <Card.Title>{course.name}</Card.Title>
+          <Link className="card-title" to={`/course/${course.id}`}>
+            {course.name}
+          </Link>
           <div className="card-rating">
             <Rating
               emptySymbol={<TiStarOutline />}
@@ -33,7 +41,7 @@ const Course = ({ course }) => {
               initialRating={course.rating}
               style={{ fontSize: "1.1rem", color: "#eb910a" }}
             />
-            <small>{` (${numeral(course.students).format(
+            <small>{` (${numeral(course.ratings).format(
               "000,000,000"
             )})`}</small>
             <Link
@@ -73,8 +81,8 @@ const Course = ({ course }) => {
             </div>
           </div>
         </Card.Body>
-      </Link>
-    </div>
+      </div>
+    </>
   );
 };
 
@@ -87,7 +95,11 @@ function CourseList({ title, settings, courses }) {
         {courses &&
           courses.length > 0 &&
           courses.map((course, index) => {
-            return <Course course={course} key={index} />;
+            return (
+              <div className="card-wrap-item" key={index}>
+                <Course course={course} />
+              </div>
+            );
           })}
       </Slider>
     </div>

@@ -1,0 +1,102 @@
+.course-head,
+.course-body {
+  background-color: #1f1535;
+  border-radius: 2px;
+  padding: 1rem;
+  font-family: "Work Sans", sans-serif;
+  color: #fff;
+}
+
+.course-body {
+  margin-top: 2rem;
+}
+
+.card-25-9 {
+  position: relative;
+  padding-top: 46.25%;
+}
+
+.card-25-9 img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.course-info-head {
+  width: 100%;
+  color: #fff;
+  height: max-content;
+  padding-top: 1rem;
+}
+
+.course-buttons {
+  padding: 1rem 0;
+}
+
+.course-buttons button {
+  margin-right: 1rem;
+}
+
+.table-info-teacher svg {
+  color: #ffbd3b;
+}
+
+.table-info-teacher {
+  color: #fff;
+}
+
+.card-badge.course-badge {
+  position: unset;
+  font-size: 1.4rem;
+}
+
+.course-price .card-sale,
+.course-price .card-price {
+  color: #fff;
+  font-size: 2rem;
+}
+
+.course-section {
+  color: #1f1535;
+}
+
+.section-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.course-lecture > *,
+.course-section > * {
+  cursor: pointer;
+}
+
+.course-lecture-item,
+.course-wrap-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-wrap-name {
+  width: 100%;
+}
+
+.course-lecture-icon {
+  padding: 0 0.125rem 0.125rem 0;
+  font-size: 1.2rem;
+}
+
+.course-lecture-item.preview {
+  color: #e09703;
+}
+
+.course-lecture-item.preview:hover {
+  text-decoration: underline;
+}
+
+.text-rating-number {
+  font-size: 5vw;
+  font-weight: 700;
+}

@@ -1,0 +1,40 @@
+.sr-only {
+  display: none;
+}
+
+.page-cs.pagination {
+  flex-shrink: 1;
+}
+
+.page-cs.pagination .page-item {
+  margin: 0 0.15vw;
+}
+
+.page-cs.pagination .page-item .page-link {
+  font-family: "Work Sans";
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: #362a51 !important;
+  width: 48px;
+  height: 48px;
+  outline: none;
+  box-shadow: none;
+  border-radius: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-cs.pagination .page-item .page-link:first-child:hover,
+.page-cs.pagination .page-item .page-link:last-child:hover {
+  text-decoration: none !important;
+}
+
+.page-cs.pagination .page-item.active .page-link {
+  background-color: #362a51;
+  color: #fff !important;
+  border: none;
+}
+.page-cs.pagination .page-item.disabled .page-link {
+  display: none;
+}

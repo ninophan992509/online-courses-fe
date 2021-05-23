@@ -3,6 +3,7 @@ import "./App.css";
 import { Container } from "react-bootstrap";
 import Auth from "./components/guest/Auth/auth";
 import Header from "./components/guest/Header/header";
+import Footer from "./components/guest/Footer/footer";
 import HomePage from "./components/guest/HomePage/homePage";
 import {
   Route,
@@ -34,7 +35,6 @@ const AuthRoutes = (user, role, query, location) => {
   }
 };
 
-
 function App(props) {
   const location = useLocation();
   const query = useQuery();
@@ -56,6 +56,7 @@ function App(props) {
           <Route component={NotFound} />
         </Switch>
       </Container>
+      <Footer />
     </div>
   );
 }
