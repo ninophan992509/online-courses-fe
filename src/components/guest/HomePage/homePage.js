@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CourseList from "../CourseList/courseList";
 import CatList from "../CatList/catList";
 import { settings4, settings5 } from "../../../configs/carousel-responsive";
 import { _courses, _cats } from "./data";
-
+import request from "../../../configs/request";
 
 function HomePage() {
   const [bestCourses, setBestCourses] = useState(_courses);
@@ -11,6 +11,25 @@ function HomePage() {
   const [viewedCourses, setViewedCourses] = useState(_courses);
   const [bestCats, setBestCats] = useState(_cats);
 
+  const fetchData = async ({ url, setList }) => {
+    try {
+      const res = await request({
+        url: `/courses/${url}`,
+        method: "GET",
+      });
+
+      if (res.status === 200) {
+        setList(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    //fetchData({ url: "newest", setList: setLastedCourses });
+    fetchData({ url: "highlights", setList: setBestCourses });
+    //fetchData({ url: "most-views", setList: setViewedCourses });
+  }, []);
   return (
     <>
       <CourseList
@@ -24,12 +43,12 @@ function HomePage() {
       />
       <CourseList
         courses={lastedCourses}
-        settings={settings5}
+        settings={settings4}
         title={"Top lasted courses"}
       />
       <CourseList
         courses={viewedCourses}
-        settings={settings5}
+        settings={settings4}
         title={"Top most viewed courses"}
       />
     </>

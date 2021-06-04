@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext } from "react";
+import { Redirect } from 'react-router-dom';
 import axios from "axios";
 export const authContext = createContext({});
 
@@ -12,7 +13,7 @@ const _user = {
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
     loading: true,
-    user: _user,
+    user: null,
     role: "student",
     accessToken: null,
     refreshToken: null,
@@ -31,13 +32,14 @@ const AuthProvider = ({ children }) => {
          
        });
     }, []);
+    */
 
 
     useEffect(() => {
       if (!auth.user) {
         <Redirect to={`/auth?ref=${auth.role}`}/>;
       }
-    }, [auth.user]);*/
+    }, [auth.user]);
 
   return (
     <authContext.Provider value={{ auth, setAuth }}>

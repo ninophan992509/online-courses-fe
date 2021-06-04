@@ -6,9 +6,12 @@ import ImageCustom from "../ImageCustom/imageCustom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./courseList.css";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { FiShoppingCart } from "react-icons/fi";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { TiStarOutline, TiStarFullOutline } from "react-icons/ti";
+import { responsive } from "../../../configs/carousel-responsive";
 import Rating from "react-rating";
 import numeral from "numeral";
 
@@ -31,7 +34,7 @@ export const Course = ({ course }) => {
         />
         <Card.Body>
           <Link className="card-title" to={`/course/${course.id}`}>
-            {course.name}
+            {course.course_name || course.name}
           </Link>
           <div className="card-rating">
             <Rating
@@ -41,7 +44,7 @@ export const Course = ({ course }) => {
               initialRating={course.rating}
               style={{ fontSize: "1.1rem", color: "#eb910a" }}
             />
-            <small>{` (${numeral(course.ratings).format(
+            <small>{` (${numeral(course.number_rating || course.ratings).format(
               "000,000,000"
             )})`}</small>
             <Link
@@ -58,11 +61,17 @@ export const Course = ({ course }) => {
             </Link>
           </div>
           <div className="flex-end-center">
-            {course.sale_price && (
-              <span className="card-sale">${course.sale_price}</span>
+            {(course.sale_price || course.sale) && (
+              <span className="card-sale">
+                ${course.sale || course.sale_price}
+              </span>
             )}
-            <span className={course.sale_price ? "card-price" : "card-sale"}>
-              ${course.price}
+            <span
+              className={
+                (course.sale_price || course.sale) ? "card-price" : "card-sale"
+              }
+            >
+              ${course.tuition_fee || course.price}
             </span>
           </div>
           <div className="card-btn">
@@ -91,7 +100,7 @@ function CourseList({ title, settings, courses }) {
   return (
     <div className="course-list">
       {title && <div className="list-title">{title}</div>}
-      <Slider {...settings} className="slider-cs">
+      <Carousel /*{...settings}*/ responsive={responsive} className="slider-cs">
         {courses &&
           courses.length > 0 &&
           courses.map((course, index) => {
@@ -101,7 +110,7 @@ function CourseList({ title, settings, courses }) {
               </div>
             );
           })}
-      </Slider>
+      </Carousel>
     </div>
   );
 }

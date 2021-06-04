@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Container, InputGroup, Tab, Nav } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import "./auth.css";
 import { BiUser } from "react-icons/bi";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -8,6 +8,8 @@ import { HiOutlineMail } from "react-icons/hi";
 import FaceIcon from "../../../images/face-icon.svg";
 import GoogleIcon from "../../../images/google-icon.svg";
 import { useQuery } from "../../../services/useQuery";
+import request from "../../../configs/request";
+import { authContext } from "../../../contexts/AuthContext";
 
 const MessagePassword = ({ require }) => {
   return (
@@ -61,6 +63,8 @@ export function Login({ _ref }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { auth, setAuth } = useContext(authContext);
+  const history = useHistory();
 
   const handleEmailInput = (e) => {
     const value = e ? e.target.value : email;
@@ -106,17 +110,44 @@ export function Login({ _ref }) {
     return ret;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const checkPass = handlePasswordInput();
     const checkEmail = handleEmailInput();
 
     if (checkEmail && checkPass) {
-      setAlert({
-        type: "success",
-        message: "Login successfully",
-        input: "",
-      });
+      try {
+        const res = await request({
+          url: "/auth/signin",
+          method: "POST",
+          data: {
+            username: email,
+            password,
+          },
+        });
+
+       if (res.status === 200) {
+          setAuth({
+            ...auth,
+            user: res.data.data.userInfo,
+            refreshToken: res.data.data.rfToken,
+            accessToken: res.data.data.accessToken,
+            role: res.data.data.userInfo.type,
+          });
+         
+         history.push('/');
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 404) {
+            setAlert({
+              type: "danger",
+              message: error.response.data.message,
+              input: "",
+            });
+          }
+        }
+      }
     }
   };
 
@@ -299,24 +330,45 @@ export function Register({ _ref }) {
     return ret;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const checkPass = handlePasswordInput();
     const checkEmail = handleEmailInput();
     const checkName = handleNameInput();
-    console.log({
-      password: checkPass,
-      email: checkEmail,
-      name: checkName,
-      alert,
-    });
 
     if (checkEmail && checkPass && checkName) {
-      setAlert({
-        type: "success",
-        message: "Login successfully",
-        input: "",
-      });
+      const data = {
+        password,
+        email,
+        fullname: name,
+        username: "abc",
+      };
+
+      try {
+        const res = await request({
+          url: "/auth/register",
+          method: "POST",
+          data,
+        });
+
+        if (res.status === 201) {
+          setAlert({
+            type: "success",
+            message: "Register successfully",
+            input: "",
+          });
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 400) {
+            setAlert({
+              type: "danger",
+              message: error.response.data.message,
+              input: "",
+            });
+          }
+        }
+      }
     }
   };
 
