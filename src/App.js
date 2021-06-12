@@ -1,16 +1,16 @@
 import { useContext } from "react";
 import "./App.css";
+
 import { Container } from "react-bootstrap";
 import Auth from "./components/guest/Auth/auth";
 import Header from "./components/guest/Header/header";
 import Footer from "./components/guest/Footer/footer";
-import HomePage from "./components/guest/HomePage/homePage";
+import Profile from "./components/student/Profile/profile";
 import {
   Route,
   Switch,
   Redirect,
   useLocation,
-  useParams,
 } from "react-router-dom";
 import { authContext } from "./contexts/AuthContext";
 import GuestRoute from "./routes/guestRoutes";
@@ -50,6 +50,7 @@ function App(props) {
             path="/auth"
             render={() => AuthRoutes(user, role, query, location)}
           />
+          <Route path="/profile" exact component={Profile} />
 
           <Route path="/" exact render={() => <Redirect to="/home" />} />
           <GuestRoute />

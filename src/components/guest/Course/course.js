@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Table, Accordion, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -14,6 +15,8 @@ import Rating from "react-rating";
 import numeral from "numeral";
 import moment from "moment";
 import "./course.css";
+import Plyr from "plyr-react";
+import "plyr-react/dist/plyr.css";
 import { _course, _courses } from "../HomePage/data";
 import RatingChart from "../RatingChart/ratingChart";
 import { Course as SingleCourse } from "../CourseList/courseList";
@@ -25,6 +28,7 @@ const Lectures = ({ lectures, onShowPreview }) => {
         lectures.map((lecture, index) => {
           return (
             <Card.Body
+              key={index}
               className={`course-lecture-item ${
                 lecture.preview ? "preview" : ""
               }`}
@@ -53,12 +57,13 @@ const Lectures = ({ lectures, onShowPreview }) => {
 const VideoModal = (props) => {
   const { handleClose, lecture } = props;
   const [link, setLink] = useState(
-    '"https://media.w3.org/2010/05/sintel/trailer_hd.mp4"'
+    "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
   );
-  
+
   useEffect(() => {
     if (lecture) {
       setLink(lecture.link);
+      console.log(lecture.link);
     }
   }, [lecture]);
 
@@ -75,10 +80,18 @@ const VideoModal = (props) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Player playsInline poster="/assets/poster.png" src={link} />
+        <Player
+          playsInline
+          poster="/assets/poster.png"
+          //src={`http://www.youtube.com/watch?v=FLGCGc7sAUw`}
+        >
+          <source src="http://www.youtube.com/watch?v=FLGCGc7sAUw" />
+        </Player>
+
+        {/* <Plyr type="video" source={ type:'video',source  `http://www.youtube.com/watch?v=FLGCGc7sAUw`} /> */}
       </Modal.Body>
       <Modal.Footer>
-        <button className="btn-cs btn-primary-cs" onClick={handleClose}>
+        <button className="btn-cs btn-primary-cs" onClick={() => handleClose()}>
           Close
         </button>
       </Modal.Footer>
@@ -109,7 +122,7 @@ function Course() {
   const calcLecturesDurationTotal = (lectures) => {
     if (lectures) {
       let total = 0;
-      lectures.map((l) => {
+      lectures.forEach((l) => {
         total += l.duration;
       });
       return total;
@@ -121,8 +134,8 @@ function Course() {
     <>
       <VideoModal
         show={show}
-        handleShow={handleShow}
-        handleClose={handleClose}
+        handleShow={() => handleShow()}
+        handleClose={() => handleClose()}
         lecture={lecture}
       />
       <div className="course-head">
@@ -157,13 +170,13 @@ function Course() {
                 />
                 <small className="text-number">{` (${numeral(
                   course.ratings
-                ).format("000,000,000")})`}</small>
+                ).format("0,0")})`}</small>
               </div>
               <div>
                 Students:{" "}
                 <span className="text-number">{`${numeral(
-                  course.students
-                ).format("000,000,000")}`}</span>
+                  course.students || course.number_enrolled
+                ).format("0,0")}`}</span>
               </div>
               <div>
                 Create by{" "}
@@ -247,7 +260,7 @@ function Course() {
                         )} students`}
                       </span>
                     </td>
-                  </tr>{" "}
+                  </tr>
                   <tr>
                     <td>
                       <FaDiscourse />
@@ -282,7 +295,7 @@ function Course() {
             {course.sections &&
               course.sections.map((section, index) => {
                 return (
-                  <Card>
+                  <Card key={index}>
                     <Accordion.Toggle
                       as={Card.Header}
                       eventKey={index + 1}
@@ -327,7 +340,7 @@ function Course() {
             {course.reviews &&
               course.reviews.map((review, index) => {
                 return (
-                  <div className="course-review-item">
+                  <div className="course-review-item" key={index}>
                     <span className="course-wrap-review-img">
                       <ImageCustom
                         width="48px"
@@ -366,8 +379,8 @@ function Course() {
           {courses &&
             courses.slice(0, 5).map((course, index) => {
               return (
-                <div className="card-wrap-item">
-                  <SingleCourse key={index} course={course} />
+                <div className="card-wrap-item" key={index}>
+                  <SingleCourse course={course} />
                 </div>
               );
             })}

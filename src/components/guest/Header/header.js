@@ -12,6 +12,7 @@ import { Link, useLocation } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { GiShoppingCart } from "react-icons/gi";
 import { FiUser } from "react-icons/fi";
+import uploadFile from "../../../configs/firebaseConfig";
 import "./header.css";
 import { authContext } from "../../../contexts/AuthContext";
 
@@ -97,12 +98,19 @@ function Header() {
   const [subCats, setSubCats] = useState(null);
   const { auth, setAuth } = useContext(authContext);
   const { user, role, cart } = auth;
+  const [file, setFile] = useState(null);
+  const [url, setURL] = useState(null);
 
   const handleHoverItem = (id) => {
     if (cats && cats.length > 0) {
       const fCat = cats.find((cat) => cat.id === id);
       setSubCats(fCat.categories);
     }
+  };
+
+  const getURL = (_url) => {
+    console.log(_url);
+    setURL(_url);
   };
 
   const handleLogOut = () => {
@@ -124,6 +132,23 @@ function Header() {
           <Navbar.Brand href="#home" className="text-logo">
             <span>{"Novus"}</span>
           </Navbar.Brand>
+          {/* <input
+            type="file"
+            onChange={(e) => {
+              if (e.target.files) {
+                setFile(e.target.files[0]);
+              }
+            }}
+          />
+          <button
+            onClick={async () => {
+              if (file) {
+                uploadFile(file, getURL);
+              }
+            }}
+          >
+            Upload
+          </button> */}
           <Navbar.Toggle aria-controls="res-navbar-nav" />
           <Navbar.Collapse id="res-navbar-nav" as="div">
             {role !== "teacher" && role !== "admin" && (
@@ -191,7 +216,7 @@ function Header() {
                 <Dropdown className="dropdown-profile">
                   <Dropdown.Toggle>
                     <FiUser />
-                    {user.name}
+                    {user.fullname}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Link className="dropdown-item" to="/profile">

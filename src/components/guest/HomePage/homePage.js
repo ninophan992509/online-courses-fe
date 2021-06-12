@@ -14,27 +14,34 @@ function HomePage() {
   const fetchData = async ({ url, setList }) => {
     try {
       const res = await request({
-        url: `/courses/${url}`,
+        url: `/${url}`,
         method: "GET",
       });
 
-      if (res.status === 200) {
-        setList(res.data.data);
+      console.log(res);
+
+      if (res.data.code) {
+        setList(res.data.data.rows ? res.data.data.rows: res.data.data);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
   };
   useEffect(() => {
-    //fetchData({ url: "newest", setList: setLastedCourses });
-    fetchData({ url: "highlights", setList: setBestCourses });
-    //fetchData({ url: "most-views", setList: setViewedCourses });
+    fetchData({ url: "courses/newest", setList: setLastedCourses });
+    fetchData({ url: "courses/highlights", setList: setBestCourses });
+    fetchData({ url: "courses/most-views", setList: setViewedCourses });
+    fetchData({
+      url: "categories/most-enroll-this-week",
+      setList: setBestCats,
+    });
   }, []);
   return (
     <>
       <CourseList
         courses={bestCourses}
         settings={settings4}
+        type="sale"
         title={"Top outstanding courses"}
       />
       <CatList
@@ -45,11 +52,13 @@ function HomePage() {
         courses={lastedCourses}
         settings={settings4}
         title={"Top lasted courses"}
+        type="sale"
       />
       <CourseList
         courses={viewedCourses}
         settings={settings4}
         title={"Top most viewed courses"}
+        type="sale"
       />
     </>
   );

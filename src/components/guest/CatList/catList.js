@@ -13,11 +13,13 @@ function CatList({ categories, title }) {
             categories.length > 0 &&
             categories.map((cat, index) => {
               return (
-                <li className="cat-item">
+                <li className="cat-item" key={index}>
                   <Link className="cat-link" to={`/category?id=${cat.id}`}>
-                    <div className="cat-name">{cat.name}</div>
+                    <div className="cat-name">{cat.category_name}</div>
                     <div className="cat-students">
-                      <span>{numeral(cat.students).format("000,000,000")}</span>
+                      <span>
+                        {numeral(cat.numberEnrollThisWeek).format("0,0")}
+                      </span>
                       {" participants"}
                     </div>
                   </Link>

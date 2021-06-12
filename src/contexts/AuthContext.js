@@ -1,45 +1,61 @@
 import { useState, useEffect, createContext } from "react";
-import { Redirect } from 'react-router-dom';
+import { Redirect } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 import axios from "axios";
 export const authContext = createContext({});
 
-const _user = {
-  id: 1,
-  name: "Ngan Phan",
-  gmail: "ptkngan7@gmail.com",
-  role: "student",
-};
-
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
-    loading: true,
+    loading: false,
     user: null,
     role: "student",
-    accessToken: null,
-    refreshToken: null,
-    cart: null,
+    cart: [],
   });
 
   axios.defaults.withCredentials = true;
 
-  /*
-    useEffect(() => {
-       setAuth({
-         loading: true,
-       });
+  useEffect(() => {
+    setAuth({
+      ...auth,
+      loading: true,
+    });
 
-       axios.get(``).then((res) => {
-         
-       });
-    }, []);
-    */
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    let userInfo = localStorage.getItem("userInfo");
+    const cart = localStorage.getItem("cart");
 
-
-    useEffect(() => {
-      if (!auth.user) {
-        <Redirect to={`/auth?ref=${auth.role}`}/>;
+    if (accessToken && refreshToken && userInfo) {
+      userInfo = JSON.parse(userInfo);
+      const decode = jwt_decode(accessToken);
+      if (
+        decode &&
+        decode.userId === userInfo.id &&
+        decode.type === userInfo.type
+      ) {
+        setAuth({
+          user: userInfo,
+          cart: cart || [],
+          role: decode.type,
+          loading: false,
+        });
+        return true;
       }
-    }, [auth.user]);
+    }
+
+    setAuth({
+      loading: true,
+      user: null,
+      role: "student",
+      cart: [],
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!auth.user) {
+      <Redirect to={`/auth?ref=${auth.role}`} />;
+    }
+  }, [auth.role, auth.user]);
 
   return (
     <authContext.Provider value={{ auth, setAuth }}>

@@ -121,21 +121,25 @@ export function Login({ _ref }) {
           url: "/auth/signin",
           method: "POST",
           data: {
-            username: email,
+            email,
             password,
           },
         });
 
-       if (res.status === 200) {
+        console.log(res);
+
+        if (res.status === 200) {
           setAuth({
             ...auth,
             user: res.data.data.userInfo,
-            refreshToken: res.data.data.rfToken,
-            accessToken: res.data.data.accessToken,
             role: res.data.data.userInfo.type,
           });
-         
-         history.push('/');
+
+          localStorage.setItem("accessToken", res.data.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.data.rfToken);
+          localStorage.setItem("userInfo", JSON.stringify(res.data.data.userInfo));
+
+          history.push("/");
         }
       } catch (error) {
         if (error.response) {
@@ -256,7 +260,6 @@ export function Register({ _ref }) {
     const re =
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const ret = re.test(value);
-    console.log(ret);
     if (!ret) {
       setAlert({
         type: "danger",
@@ -341,7 +344,6 @@ export function Register({ _ref }) {
         password,
         email,
         fullname: name,
-        username: "abc",
       };
 
       try {

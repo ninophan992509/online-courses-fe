@@ -15,16 +15,22 @@ import { responsive } from "../../../configs/carousel-responsive";
 import Rating from "react-rating";
 import numeral from "numeral";
 
-export const Course = ({ course }) => {
+export const Course = ({ course, type }) => {
   const [liked, setLiked] = useState(false);
 
   return (
     <>
       <div className="card card-cs ">
-        {(course.new || course.best_seller) && (
-          <span className={`card-badge ${course.new ? "new" : "best-seller"}`}>
-            {course.new ? "New" : "Best seller"}
-          </span>
+        {type === "sale" && (
+          <>
+            {(course.new || course.best_seller) && (
+              <span
+                className={`card-badge ${course.new ? "new" : "best-seller"}`}
+              >
+                {course.new ? "New" : "Best seller"}
+              </span>
+            )}
+          </>
         )}
 
         <ImageCustom
@@ -33,7 +39,14 @@ export const Course = ({ course }) => {
           borderRadius="2px"
         />
         <Card.Body>
-          <Link className="card-title" to={`/course/${course.id}`}>
+          <Link
+            className="card-title"
+            to={
+              type === "private"
+                ? `/student-courses/${course.id}`
+                : `/course/${course.id}`
+            }
+          >
             {course.course_name || course.name}
           </Link>
           <div className="card-rating">
@@ -45,7 +58,7 @@ export const Course = ({ course }) => {
               style={{ fontSize: "1.1rem", color: "#eb910a" }}
             />
             <small>{` (${numeral(course.number_rating || course.ratings).format(
-              "000,000,000"
+              "0,0"
             )})`}</small>
             <Link
               className="card-link-cs link-cat"
@@ -60,42 +73,50 @@ export const Course = ({ course }) => {
               {course.teacher_name}
             </Link>
           </div>
-          <div className="flex-end-center">
-            {(course.sale_price || course.sale) && (
-              <span className="card-sale">
-                ${course.sale || course.sale_price}
-              </span>
-            )}
-            <span
-              className={
-                (course.sale_price || course.sale) ? "card-price" : "card-sale"
-              }
-            >
-              ${course.tuition_fee || course.price}
-            </span>
-          </div>
-          <div className="card-btn">
-            <div className="left">
-              <button
-                className="btn-icon btn-icon-cs btn-like"
-                onClick={() => setLiked(!liked)}
+          {type === "sale" && (
+            <div className="flex-end-center">
+              {(course.sale_price || course.sale) && !course.sale && (
+                <span className="card-sale">
+                  ${course.sale || course.sale_price}
+                </span>
+              )}
+              <span
+                className={
+                  course.sale || course.sale_price ? "card-price" : "card-sale"
+                }
               >
-                {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
-              </button>
+                ${course.tuition_fee || course.price}
+              </span>
             </div>
-            <div className="right">
-              <button className="btn-icon btn-icon-cs btn-cart">
-                <FiShoppingCart />
-              </button>
+          )}
+          {(type === "sale" || type === "favour") && (
+            <div className="card-btn">
+              {type === "favour" && (
+                <div className="left">
+                  <button
+                    className="btn-icon btn-icon-cs btn-like"
+                    onClick={() => setLiked(!liked)}
+                  >
+                    {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
+                  </button>
+                </div>
+              )}
+              {type === "sale" && (
+                <div className="right">
+                  <button className="btn-icon btn-icon-cs btn-cart">
+                    <FiShoppingCart />
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </Card.Body>
       </div>
     </>
   );
 };
 
-function CourseList({ title, settings, courses }) {
+function CourseList({ title, settings, courses, type }) {
   // const [courses, setCourses] = useState(_courses);
   return (
     <div className="course-list">
@@ -106,7 +127,7 @@ function CourseList({ title, settings, courses }) {
           courses.map((course, index) => {
             return (
               <div className="card-wrap-item" key={index}>
-                <Course course={course} />
+                <Course course={course} type={type} />
               </div>
             );
           })}

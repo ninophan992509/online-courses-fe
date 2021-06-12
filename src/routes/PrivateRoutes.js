@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Spinner } from "react-bootstrap";
 import { Route, Redirect } from "react-router-dom";
 import { authContext } from "./contexts/AuthContext";
 //import Loading from "./components/Loading/loading";
@@ -17,8 +18,10 @@ const PrivateRoute = ({ component: Component, condition, ...rest }) => {
               className="flex-column-center w-100"
               style={{ height: "100vh", background: "#fff" }}
             >
-              {/*<Loading color="#33bfff" size={30} />*/}
-              <h2 className="text-loading">Loading...</h2>
+              <div className="text-loading">
+                <Spinner animation="border" variant="dark" />
+                Loading...
+              </div>
             </div>
           );
         }}

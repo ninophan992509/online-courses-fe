@@ -10,12 +10,17 @@ const routes = [
 ];
 
 const StudentRoute = () => {
-  let guestRoute = null;
-  guestRoute = routes.map((route, index) => {
+  let studentRoute = null;
+  studentRoute = routes.map((route, index) => {
     return (
-      <Route path={route.path} exact={route.exact} component={route.main} />
+      <Route
+        key={index}
+        path={route.path}
+        exact={route.exact}
+        component={route.main}
+      />
     );
   });
-  return guestRoute;
+  return studentRoute;
 };
 export default StudentRoute;

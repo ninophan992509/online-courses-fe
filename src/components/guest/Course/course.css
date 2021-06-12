@@ -126,6 +126,7 @@
 .top-purchased-courses {
   display: flex;
   flex-wrap: wrap;
+  flex-grow: 3;
 }
 
 .top-purchased-courses .card-wrap-item {
