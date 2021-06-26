@@ -126,30 +126,27 @@ export function Login({ _ref }) {
           },
         });
 
-        console.log(res);
 
-        if (res.status === 200) {
+        if (res.code) {
           setAuth({
             ...auth,
-            user: res.data.data.userInfo,
-            role: res.data.data.userInfo.type,
+            user: res.data.userInfo,
+            role: res.data.userInfo.type,
           });
 
-          localStorage.setItem("accessToken", res.data.data.accessToken);
-          localStorage.setItem("refreshToken", res.data.data.rfToken);
-          localStorage.setItem("userInfo", JSON.stringify(res.data.data.userInfo));
+          localStorage.setItem("accessToken", res.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.rfToken);
+          localStorage.setItem("userInfo", JSON.stringify(res.data.userInfo));
 
           history.push("/");
         }
       } catch (error) {
-        if (error.response) {
-          if (error.response.status === 404) {
+        if (error.response && error.response.data) {
             setAlert({
               type: "danger",
               message: error.response.data.message,
               input: "",
             });
-          }
         }
       }
     }
@@ -278,6 +275,7 @@ export function Register({ _ref }) {
   };
 
   const handlePasswordInput = (e) => {
+
     const value = e ? e.target.value : password;
     setPassword(value);
 
@@ -351,9 +349,9 @@ export function Register({ _ref }) {
           url: "/auth/register",
           method: "POST",
           data,
-        });
+        });        
 
-        if (res.status === 201) {
+        if (res.code) {
           setAlert({
             type: "success",
             message: "Register successfully",
@@ -361,15 +359,40 @@ export function Register({ _ref }) {
           });
         }
       } catch (error) {
-        if (error.response) {
-          if (error.response.status === 400) {
+        if (error.response && error.response.data) {
             setAlert({
               type: "danger",
               message: error.response.data.message,
               input: "",
             });
-          }
         }
+      }
+    } else {
+      if (!checkEmail)
+      {
+         setAlert({
+              type: "danger",
+              message: 'Email is invalid',
+              input: "",
+            });
+      }
+      
+      if (!checkName)
+      {
+         setAlert({
+              type: "danger",
+              message: 'Full name is invalid',
+              input: "",
+            });
+      }
+      
+      if (!checkPass)
+      {
+         setAlert({
+              type: "danger",
+              message: 'Password is invalid',
+              input: "",
+            });
       }
     }
   };

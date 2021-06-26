@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useCallback, useEffect } from "react";
 import {
   Navbar,
   NavDropdown,
@@ -12,9 +12,10 @@ import { Link, useLocation } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { GiShoppingCart } from "react-icons/gi";
 import { FiUser } from "react-icons/fi";
-import uploadFile from "../../../configs/firebaseConfig";
+// import uploadFile from "../../../configs/firebaseConfig";
 import "./header.css";
 import { authContext } from "../../../contexts/AuthContext";
+import { useLoadCategories } from "./useLoadCategories";
 
 const subCategories = [
   {
@@ -84,7 +85,7 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
                     }
               }
             >
-              <span className="item-text">{cat.name}</span>
+              <span className="item-text">{cat.category_name}</span>
               <span className="arrow-text"></span>
             </ListGroup.Item>
           );
@@ -94,12 +95,38 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
 };
 
 function Header() {
-  const [cats, setCats] = useState(categories);
+  // const [cats, setCats] = useState(categories);
   const [subCats, setSubCats] = useState(null);
   const { auth, setAuth } = useContext(authContext);
   const { user, role, cart } = auth;
   const [file, setFile] = useState(null);
   const [url, setURL] = useState(null);
+  const [filter, setFilter] = useState({});
+  
+  useEffect(() => {
+    setFilter({ limit: 10, page: 1 });
+  }, []);
+
+  const { loading, error, cats, hasMore, pageNumber } = useLoadCategories(filter);
+  const observer = useRef();
+  
+  const lastCategoryRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setFilter({
+            ...filter,
+            page: pageNumber + 1
+           })
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
 
   const handleHoverItem = (id) => {
     if (cats && cats.length > 0) {
@@ -119,6 +146,8 @@ function Header() {
 
   const location = useLocation();
   if (location.pathname === "/auth") return null;
+
+
   return (
     <>
       <Navbar

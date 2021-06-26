@@ -15,7 +15,7 @@ function CatList({ categories, title }) {
               return (
                 <li className="cat-item" key={index}>
                   <Link className="cat-link" to={`/category?id=${cat.id}`}>
-                    <div className="cat-name">{cat.category_name}</div>
+                    <div className="cat-name">{cat.category_name}{` ${numeral(cat.number_enrolled).format("0,0")}`}</div>
                     <div className="cat-students">
                       <span>
                         {numeral(cat.numberEnrollThisWeek).format("0,0")}

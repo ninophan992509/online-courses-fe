@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CourseList from "../CourseList/courseList";
 import CatList from "../CatList/catList";
-import { settings4, settings5 } from "../../../configs/carousel-responsive";
+import { settings4 } from "../../../configs/carousel-responsive";
 import { _courses, _cats } from "./data";
 import request from "../../../configs/request";
 
@@ -11,31 +11,46 @@ function HomePage() {
   const [viewedCourses, setViewedCourses] = useState(_courses);
   const [bestCats, setBestCats] = useState(_cats);
 
-  const fetchData = async ({ url, setList }) => {
-    try {
-      const res = await request({
-        url: `/${url}`,
+  const fetchData = async (url) => {
+      return await request({
+        url,
         method: "GET",
       });
-
-      console.log(res);
-
-      if (res.data.code) {
-        setList(res.data.data.rows ? res.data.data.rows: res.data.data);
-      }
-    } catch (error) {
-      console.log(error.response);
-    }
   };
+
   useEffect(() => {
-    fetchData({ url: "courses/newest", setList: setLastedCourses });
-    fetchData({ url: "courses/highlights", setList: setBestCourses });
-    fetchData({ url: "courses/most-views", setList: setViewedCourses });
-    fetchData({
-      url: "categories/most-enroll-this-week",
-      setList: setBestCats,
+    Promise.all([
+      fetchData( "/courses/newest"),
+      fetchData( "/courses/highlights"),
+      fetchData( "/courses/most-views"),
+      fetchData("/categories/most-enroll-this-week")
+    ]).then(async([res1, res2, res3, res4]) => {
+      if (res1.data && res1.data.rows)
+      {
+        setLastedCourses(res1.data.rows);
+      }
+      
+      if (res2.data && res2.data.rows)
+      {
+        setBestCourses(res2.data.rows);
+      }
+      
+      if (res3.data && res3.data.rows)
+      {
+        setViewedCourses(res1.data.rows);
+      }
+      
+      if (res4.data)
+      {
+        setViewedCourses(res1.data);
+      }
+
+    }).catch(error => {
+      console.log(error);
     });
+
   }, []);
+  
   return (
     <>
       <CourseList

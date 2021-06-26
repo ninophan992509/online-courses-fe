@@ -1,0 +1,13 @@
+.page-not-found{
+    width: 100%;
+    height:100vh;
+    padding: 100px 0;
+}
+
+.text-404{
+    font-size: 50vw;
+    font-weight: 600;
+    color: #000000d0;
+    margin-bottom: 20px;
+}
+

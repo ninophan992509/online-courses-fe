@@ -29,13 +29,18 @@ const refreshToken = () => {
       .then((res) => {
         if (res.data.code) {
           localStorage.setItem("accessToken", res.data.data.accessToken);
-        } else {
-          throw new Error();
         }
       })
-      .catch(() => {
+      .catch((error) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        if (error.response) {
+          console.log(error.response.data);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
       });
   }
 };
@@ -64,9 +69,16 @@ const request = ({ url, method, data, params }) => {
     }),
   })
     .then((res) => {
-      return res;
+      return res.data;
     })
     .catch((error) => {
+      if (error.response) {
+        console.log(error.response.data);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log("Error", error.message);
+      }
       if (axios.isCancel(error)) {
         console.log("Request canceled");
       }

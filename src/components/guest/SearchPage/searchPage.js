@@ -8,6 +8,7 @@ import { useQuery } from "../../../services/useQuery";
 import axios from "axios";
 import config from "../../../configs/config.json";
 import { useParams } from "react-router";
+
 const sorts = [
   {
     name: "Rating Descending",

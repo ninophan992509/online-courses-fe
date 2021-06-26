@@ -9,7 +9,6 @@ const AuthProvider = ({ children }) => {
     loading: false,
     user: null,
     role: "student",
-    cart: [],
   });
 
   axios.defaults.withCredentials = true;
@@ -23,7 +22,6 @@ const AuthProvider = ({ children }) => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
     let userInfo = localStorage.getItem("userInfo");
-    const cart = localStorage.getItem("cart");
 
     if (accessToken && refreshToken && userInfo) {
       userInfo = JSON.parse(userInfo);
@@ -35,7 +33,6 @@ const AuthProvider = ({ children }) => {
       ) {
         setAuth({
           user: userInfo,
-          cart: cart || [],
           role: decode.type,
           loading: false,
         });
@@ -43,12 +40,12 @@ const AuthProvider = ({ children }) => {
       }
     }
 
-    setAuth({
-      loading: true,
-      user: null,
-      role: "student",
-      cart: [],
-    });
+    // setAuth({
+    //   loading: true,
+    //   user: null,
+    //   role: "student",
+    //   cart: [],
+    // });
   }, []);
 
   useEffect(() => {
