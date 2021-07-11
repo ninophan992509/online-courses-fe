@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
 import Slider from "react-slick";
@@ -14,20 +14,37 @@ import { TiStarOutline, TiStarFullOutline } from "react-icons/ti";
 import { responsive } from "../../../configs/carousel-responsive";
 import Rating from "react-rating";
 import numeral from "numeral";
+import { appContext } from "../../../contexts/AppContext";
+import { ADD_ITEM_TO_CART } from "../../../constants";
+
 
 export const Course = ({ course, type }) => {
   const [liked, setLiked] = useState(false);
+  const { store, dispatch } = useContext(appContext);
+  const addToCart = (item) => {
+    const carts = store.carts;
+    const isExist = carts.find(c => c.id === item.id);
+    if (!isExist)
+    {
+      dispatch({
+        type: ADD_ITEM_TO_CART,
+        payload: item,
+      });
+    } else {
+      alert('Bạn đã thêm khóa học này vào giỏ hàng');
+    }
+  }
 
   return (
     <>
       <div className="card card-cs ">
         {type === "sale" && (
           <>
-            {(course.new || course.best_seller) && (
+            {(course.isNew || course.isMostEnrolled) && (
               <span
-                className={`card-badge ${course.new ? "new" : "best-seller"}`}
+                className={`card-badge ${course.isNew ? "new" : "best-seller"}`}
               >
-                {course.new ? "New" : "Best seller"}
+                {course.isNew ? "New" : "Best seller"}
               </span>
             )}
           </>
@@ -75,14 +92,14 @@ export const Course = ({ course, type }) => {
           </div>
           {type === "sale" && (
             <div className="flex-end-center">
-              {(course.sale_price || course.sale) && !course.sale && (
+              {(course.sale_price || +course.sale !== 0 ) && (
                 <span className="card-sale">
                   ${course.sale || course.sale_price}
                 </span>
               )}
               <span
                 className={
-                  course.sale || course.sale_price ? "card-price" : "card-sale"
+                  (course.sale || course.sale_price) ? "card-price" : "card-sale"
                 }
               >
                 ${course.tuition_fee || course.price}
@@ -103,7 +120,7 @@ export const Course = ({ course, type }) => {
               )}
               {type === "sale" && (
                 <div className="right">
-                  <button className="btn-icon btn-icon-cs btn-cart">
+                  <button className="btn-icon btn-icon-cs btn-cart" onClick={()=>addToCart(course)}>
                     <FiShoppingCart />
                   </button>
                 </div>

@@ -234,3 +234,58 @@
   background-color: #e9ecef !important;
   font-weight: 700;
 }
+
+.dropdown-cart{
+   font-family: "Work Sans", sans-serif !important;
+}
+
+.dropdown-cart .dropdown-menu{
+  right: -100%;
+}
+
+.dropdown-cart .dropdown-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  width: 320px;
+}
+
+.dropdown-cart .dropdown-item:hover,
+.dropdown-cart .dropdown-item:focus,
+.dropdown-cart .dropdown-item:active{
+  display: flex;
+  justify-content: space-between;
+  color: #1e2125 !important;
+  background-color: #e9ecef !important;
+  font-weight: 500;
+}
+
+.dropdown-cart .dropdown-item button:hover,
+.dropdown-cart .dropdown-item button:focus,
+.dropdown-cart .dropdown-item button:active{
+  background-color: #1e2125 !important;
+  color: #e9ecef !important;
+  font-weight: 500;
+  transform: none;
+}
+
+.text-number{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dropdown-cart .dropdown-item button{
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f1535;
+  background-color: #ffbd3b!important;
+  width: 80px;
+  height: 40px;
+  border-radius: 48px;
+  margin: .5rem;
+}
+
+.dropdown-cart .dropdown-item .btn-delete{
+   background-color: transparent !important;
+   color: #1f153587;
+}

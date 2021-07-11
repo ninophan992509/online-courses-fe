@@ -24,6 +24,7 @@ export const useLoadCategories = (filter) => {
                 method: 'GET',
                 params: filter
                 });
+    
                 if (res.data.rows.length > 0) {
                     setCats(cats.concat(res.data.rows));
                     setHasMore(true);
@@ -33,10 +34,12 @@ export const useLoadCategories = (filter) => {
                 setPageNumber(res.pageNumber);
                 
             } catch (error) {
+                console.log(error);
                 setError(true);
             }
             
         }
+        
         fetchData();
         setLoading(false);
        

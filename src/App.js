@@ -1,4 +1,4 @@
-import { useContext, useReducer } from "react";
+import { useContext, useReducer, useEffect } from "react";
 import "./App.css";
 import { Container } from "react-bootstrap";
 import Auth from "./components/guest/Auth/auth";
@@ -36,8 +36,11 @@ const AuthRoutes = (user, role, query, location) => {
   }
 };
 
+const cartLocal = localStorage.getItem('carts');
+
+
 const initialState = {
-  carts:[]
+  carts: cartLocal ? JSON.parse(cartLocal) : [],
 }
 
 function App(props) {

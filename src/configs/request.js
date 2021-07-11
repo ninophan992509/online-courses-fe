@@ -3,12 +3,19 @@ import jwt_decode from "jwt-decode";
 const BASE_URL = "http://localhost:3000/api";
 
 const checkExpireToken = (token) => {
-  const payload = jwt_decode(token);
-  const { exp } = payload;
-  if (Date.now() >= exp * 1000) {
-    return true;
+  if (token)
+  {
+     const payload = jwt_decode(token);
+     const { exp } = payload;
+     if (Date.now() >= exp * 1000) {
+       return true;
+    }
+    return false;
   }
-  return false;
+
+  return true;
+  
+  
 };
 
 const refreshToken = () => {
@@ -49,7 +56,7 @@ const { CancelToken } = axios;
 let cancel;
 
 const request = ({ url, method, data, params }) => {
-  if (cancel !== undefined) cancel();
+  // if (cancel !== undefined) cancel();
   if (!url.match("auth")) refreshToken();
   const token = localStorage.getItem("accessToken");
 
@@ -63,10 +70,12 @@ const request = ({ url, method, data, params }) => {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       Authorization: `Bearer ${token || ""}`,
+      "x-access-token": `${token}`,
     },
-    cancelToken: new CancelToken(function executor(c) {
-      cancel = c;
-    }),
+
+    // cancelToken: new CancelToken(function executor(c) {
+    //   cancel = c;
+    // }),
   })
     .then((res) => {
       return res.data;
@@ -75,13 +84,13 @@ const request = ({ url, method, data, params }) => {
       if (error.response) {
         console.log(error.response.data);
       } else if (error.request) {
-        console.log(error.request);
+        console.log(error.request.data);
       } else {
         console.log("Error", error.message);
       }
-      if (axios.isCancel(error)) {
-        console.log("Request canceled");
-      }
+      // if (axios.isCancel(error)) {
+      //   console.log("Request canceled");
+      // }
       throw error;
     });
 };

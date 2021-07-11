@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Card, Table, Accordion, Modal } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Player } from "video-react";
 import ImageCustom from "../ImageCustom/imageCustom";
 import { FiShoppingCart } from "react-icons/fi";
@@ -20,6 +20,9 @@ import "plyr-react/dist/plyr.css";
 import { _course, _courses } from "../HomePage/data";
 import RatingChart from "../RatingChart/ratingChart";
 import { Course as SingleCourse } from "../CourseList/courseList";
+import request from "../../../configs/request";
+import { appContext } from "../../../contexts/AppContext";
+import { ADD_ITEM_TO_CART } from "../../../constants";
 
 const Lectures = ({ lectures, onShowPreview }) => {
   return (
@@ -100,11 +103,56 @@ const VideoModal = (props) => {
 };
 
 function Course() {
+  const { store, dispatch } = useContext(appContext);
   const [liked, setLiked] = useState(false);
   const [course, setCourse] = useState(_course);
   const [courses, setCourses] = useState(_courses);
+  const [chapters, setChapters] = useState({
+    chapters: [],
+    page: 0,
+    pageNumber:0
+  });
   const [show, setShow] = useState(false);
   const [lecture, setLecture] = useState(null);
+  const { id } = useParams();
+
+  const loadCourse = async(id) => {
+    const res = await request(
+      {
+        method: 'GET',
+        url: `/courses/${id}`,
+      }
+    );
+    if (res.code)
+    {
+      setCourse(res.data);
+    }
+  }
+  
+  const loadChapters = async (id) => {
+    const res = await request(
+      {
+        method: 'GET',
+        url: `/courses/${id}/chapters`,
+        params: {
+          page: chapters.page + 1,
+          limit: 10
+        }
+      }
+    );
+    if (res.code)
+    {
+      setChapters({chapters:res.data.rows, page:res.pageNumber, pageSize:res.pageSize });
+    }
+  }
+
+  useEffect(() => {
+    if (id)
+    {
+      loadCourse(id);
+      loadChapters(id);
+    }
+  }, [id])
 
   const handleShow = () => {
     setShow(true);
@@ -129,6 +177,21 @@ function Course() {
     }
     return 0;
   };
+ 
+
+  const addToCart = (item) => {
+    const carts = store.carts;
+    const isExist = carts.find(c => c.id === item.id);
+    if (!isExist)
+    {
+      dispatch({
+        type: ADD_ITEM_TO_CART,
+        payload: item,
+      });
+    } else {
+      alert('Bạn đã thêm khóa học này vào giỏ hàng');
+    }
+  }
 
   return (
     <>
@@ -146,20 +209,20 @@ function Course() {
             </div>
             <div className="course-info-head">
               <div className="course-wrap-badge">
-                {(course.new || course.best_seller) && (
+                {(course.isNew || course.isMostEnrolled) && (
                   <span
                     className={`card-badge course-badge ${
-                      course.new ? "new" : "best-seller"
+                      course.isNew ? "new" : "best-seller"
                     }`}
                   >
-                    {course.new ? "New" : "Best seller"}
+                    {course.isNew ? "New" : "Best seller"}
                   </span>
                 )}
               </div>
               <h3>
-                <span>{course.name}</span>
+                <span>{course.course_name}</span>
               </h3>
-              <div>{course.short_description}</div>
+              <div>{course.short_description || course.description}</div>
               <div className="course-rating-head">
                 <Rating
                   emptySymbol={<TiStarOutline />}
@@ -169,7 +232,7 @@ function Course() {
                   style={{ fontSize: "1.1rem", color: "#eb910a" }}
                 />
                 <small className="text-number">{` (${numeral(
-                  course.ratings
+                  course.ratings || course.number_rating
                 ).format("0,0")})`}</small>
               </div>
               <div>
@@ -186,16 +249,16 @@ function Course() {
               </div>
               <div>
                 Last updated:{" "}
-                <span className="text-number">{course.last_update}</span>
+                <span className="text-number">{course.last_update || moment(course.updateAt).format('L')}</span>
               </div>
               <div className="flex-start-center course-price">
-                {course.sale_price && (
-                  <span className="card-sale">${course.sale_price}</span>
+                {(course.sale_price || +course.sale !== 0 )&& (
+                  <span className="card-sale">${course.sale_price || course.sale}</span>
                 )}
                 <span
-                  className={course.sale_price ? "card-price" : "card-sale"}
+                  className={(course.sale_price || +course.sale  !== 0 )? "card-price" : "card-sale"}
                 >
-                  ${course.price}
+                  ${course.price || course.tuition_fee}
                 </span>
               </div>
               <div className="course-buttons">
@@ -205,7 +268,7 @@ function Course() {
                 >
                   {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
                 </button>
-                <button className="btn-cs btn-primary-cs">
+                <button className="btn-cs btn-primary-cs" onClick={()=>addToCart(course)}>
                   {"Add to cart  "}
                   <FiShoppingCart />
                 </button>
@@ -244,7 +307,7 @@ function Course() {
                     <td>
                       <span className="text-number">
                         {`${numeral(course.teacher_reviews).format(
-                          "000,000,000"
+                          "0,0"
                         )} reviews`}
                       </span>
                     </td>
@@ -256,7 +319,7 @@ function Course() {
                     <td>
                       <span className="text-number">
                         {`${numeral(course.teacher_students).format(
-                          "000,000,000"
+                          "0,0"
                         )} students`}
                       </span>
                     </td>
@@ -284,7 +347,7 @@ function Course() {
       <div className="course-body">
         <div className="course-description">
           <h3>Description</h3>
-          <p>{course.full_description}</p>
+          <p>{course.full_description || course.description  }</p>
         </div>
       </div>
       <div className="course-body">
@@ -292,8 +355,8 @@ function Course() {
           <h3>Course Content</h3>
           <div></div>
           <Accordion defaultActiveKey="0" className="course-section">
-            {course.sections &&
-              course.sections.map((section, index) => {
+            {chapters.chapters.length > 0 && 
+              chapters.chapters.map((section, index) => {
                 return (
                   <Card key={index}>
                     <Accordion.Toggle
@@ -316,6 +379,14 @@ function Course() {
                 );
               })}
           </Accordion>
+          {chapters.chapters.length === 0 && (
+            <div className="text-not-found">
+               Chưa cập nhật nội dung
+            </div>
+          )}
+          <div className="flex-center mt-2">
+            <button className="btn-cs btn-primary-cs">Show more contents</button>
+          </div>
         </div>
       </div>
       <div className="course-body">
@@ -333,7 +404,7 @@ function Course() {
               <span>{"Course Rating"}</span>
             </div>
             <div className="course-rating-chart">
-              <RatingChart chart={course.rating_chart} total={course.ratings} />
+              {/* <RatingChart chart={course.rating_chart} total={course.ratings} /> */}
             </div>
           </div>
           <div className="course-review">

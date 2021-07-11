@@ -8,14 +8,19 @@ import {
   Container,
   Dropdown,
 } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { GiShoppingCart } from "react-icons/gi";
 import { FiUser } from "react-icons/fi";
+import { AiFillDelete } from "react-icons/ai";
 // import uploadFile from "../../../configs/firebaseConfig";
 import "./header.css";
 import { authContext } from "../../../contexts/AuthContext";
 import { useLoadCategories } from "./useLoadCategories";
+import { appContext } from "../../../contexts/AppContext";
+import { REMOVE_ITEM_IN_CART } from "../../../constants";
+import request from "../../../configs/request";
+
 
 const subCategories = [
   {
@@ -66,6 +71,7 @@ const categories = [
 ];
 
 const CategoryList = ({ cats, handleHoverItem, variant }) => {
+  const history = useHistory();
   return (
     <ListGroup as="ul" className="list-category">
       {cats &&
@@ -84,6 +90,9 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
                       return null;
                     }
               }
+              onClick={() => {
+                history.push(`/courses/${cat.id}`);
+              }}
             >
               <span className="item-text">{cat.category_name}</span>
               <span className="arrow-text"></span>
@@ -95,16 +104,32 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
 };
 
 function Header() {
-  // const [cats, setCats] = useState(categories);
+  // const [cats, setCats] = useState([]);
   const [subCats, setSubCats] = useState(null);
   const { auth, setAuth } = useContext(authContext);
-  const { user, role, cart } = auth;
+  const { store, dispatch } = useContext(appContext);
+  const { user, role } = auth;
   const [file, setFile] = useState(null);
   const [url, setURL] = useState(null);
+  const [searchVal, setSearchVal] = useState('');
   const [filter, setFilter] = useState({});
+  const location = useLocation();
+  const history = useHistory();
+  const params = new URLSearchParams(window.location.search);
+  const keyword = params.get('keyword');
+
+
+
+
+  useEffect(() => {
+    if (keyword)
+    {
+      setSearchVal(keyword);    
+    }
+  }, [location]);
   
   useEffect(() => {
-    setFilter({ limit: 10, page: 1 });
+    setFilter({ limit: 10, page: 0 });
   }, []);
 
   const { loading, error, cats, hasMore, pageNumber } = useLoadCategories(filter);
@@ -135,17 +160,24 @@ function Header() {
     }
   };
 
-  const getURL = (_url) => {
-    console.log(_url);
-    setURL(_url);
-  };
+  // const getURL = (_url) => {
+  //   console.log(_url);
+  //   setURL(_url);
+  // };
 
   const handleLogOut = () => {
     setAuth({ ...auth, user: null, role: "guest" });
   };
 
-  const location = useLocation();
+
   if (location.pathname === "/auth") return null;
+
+  const removeItem = (item) => {
+    dispatch({
+      type: REMOVE_ITEM_IN_CART,
+      payload: item,
+    });  
+  }
 
 
   return (
@@ -199,15 +231,19 @@ function Header() {
                   </NavDropdown>
                 </Nav>
                 <InputGroup className="input-group-search">
-                  <button className="input-group-prepend">
+                  <button className="input-group-prepend" onClick={() => {
+                    if (searchVal)
+                      history.push(`/courses/search?keyword=${searchVal}`);
+                  }}>
                     <BsSearch />
                   </button>
                   <input
                     aria-label="search"
-                    aria-describedby="search"
                     type="text"
                     className="input-form-search form-control"
                     placeholder="Search"
+                    value={searchVal}
+                    onChange={(e)=>setSearchVal(e.target.value)}
                   />
                 </InputGroup>
               </>
@@ -215,12 +251,37 @@ function Header() {
 
             <Nav className="right">
               {role !== "teacher" && role !== "admin" && (
-                <div className="wrap-cart">
-                  <span className="cart-number">{cart ? cart.length : 0}</span>
-                  <button>
+                <Dropdown className="dropdown-profile dropdown-cart">
+                  <Dropdown.Toggle className="wrap-cart">
+                     <span className="cart-number">{store.carts ? store.carts.length : 0}</span>
+                   <button>
                     <GiShoppingCart />
                   </button>
-                </div>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {store.carts && store.carts.map((c, index) => {
+                      return (
+                        <Dropdown.Item className="dropdown-item">
+                          <div>
+                            <div>{c.course_name}</div>
+                            <div>{c.teacher_name}</div>
+                            <div className="text-number">${c.tuition_fee}</div>
+                          </div>
+                          <div>
+                            <button className="btn-cs btn-primary-cs">Pay</button>
+                            <button className="btn-cs btn-primary-cs btn-delete" onClick={()=>removeItem(c)}><AiFillDelete/></button>
+                          </div>
+                          
+                        </Dropdown.Item>
+                       )
+                    })}
+                    {store.carts && store.carts.length === 0 && (
+                      <Dropdown.Item>
+                         <small>Không có khóa học nào</small>
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
               )}
 
               {!user && (

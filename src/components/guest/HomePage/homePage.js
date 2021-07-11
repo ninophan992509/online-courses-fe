@@ -4,18 +4,25 @@ import CatList from "../CatList/catList";
 import { settings4 } from "../../../configs/carousel-responsive";
 import { _courses, _cats } from "./data";
 import request from "../../../configs/request";
+import config from "../../../configs/config.json";
+import axios from "axios";
 
 function HomePage() {
-  const [bestCourses, setBestCourses] = useState(_courses);
-  const [lastedCourses, setLastedCourses] = useState(_courses);
-  const [viewedCourses, setViewedCourses] = useState(_courses);
-  const [bestCats, setBestCats] = useState(_cats);
+  const [bestCourses, setBestCourses] = useState([]);
+  const [lastedCourses, setLastedCourses] = useState([]);
+  const [viewedCourses, setViewedCourses] = useState([]);
+  const [bestCats, setBestCats] = useState([]);
 
   const fetchData = async (url) => {
-      return await request({
-        url,
-        method: "GET",
-      });
+    return axios({
+      url: `${config.API_URL}${url}`,
+      method:'GET',
+      withCredentials: false,
+      headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+      },
+    });
   };
 
   useEffect(() => {
@@ -24,25 +31,26 @@ function HomePage() {
       fetchData( "/courses/highlights"),
       fetchData( "/courses/most-views"),
       fetchData("/categories/most-enroll-this-week")
-    ]).then(async([res1, res2, res3, res4]) => {
-      if (res1.data && res1.data.rows)
+    ]).then(async ([res1, res2, res3, res4]) => {
+
+      if (res1.data.data)
       {
-        setLastedCourses(res1.data.rows);
+        setLastedCourses(res1.data.data);
+      }
+         
+      if (res2.data.data)
+      {
+        setBestCourses(res2.data.data);
       }
       
-      if (res2.data && res2.data.rows)
+      if (res3.data.data)
       {
-        setBestCourses(res2.data.rows);
+        setViewedCourses(res3.data.data);
       }
-      
-      if (res3.data && res3.data.rows)
+
+      if (res4.data.data)
       {
-        setViewedCourses(res1.data.rows);
-      }
-      
-      if (res4.data)
-      {
-        setViewedCourses(res1.data);
+        setBestCats(res4.data.data);
       }
 
     }).catch(error => {

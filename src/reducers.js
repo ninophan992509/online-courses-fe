@@ -6,36 +6,27 @@ export default function reducer(state, action) {
     case INIT:
       return {
         carts:[]
-          }
+      }
     case ADD_ITEM_TO_CART:
-          return {
-              ...state,
-            carts: [...state.carts, action.payload] 
-          }
+
+        localStorage.setItem('carts', JSON.stringify([...state.carts, action.payload]));
+         return {
+         ...state,
+           carts: [...state.carts, action.payload]
+         }  
+     
     case CLEAR_CART:
+      localStorage.removeItem('carts');
       return {
         ...state,
         carts: []
-          }
-      
+      }    
     case REMOVE_ITEM_IN_CART:
+      localStorage.setItem('carts',JSON.stringify(state.carts.filter(c => c.id !== action.payload.id)));
       return {
         ...state,
-        carts: state.carts.filter(c => c.id !== action.payload.cartId)
+        carts: state.carts.filter(c => c.id !== action.payload.id)
       }
-
-    case 'update_query':
-      return {
-        ...state,
-        query: action.payload.query
-      }
-
-    case 'complete_task':
-      return {
-        ...state,
-        items: state.items.map(i => i.id === action.payload.itemId ? { ...i, complete: true } : i)
-      }
-
     default:
       return state;
   }
