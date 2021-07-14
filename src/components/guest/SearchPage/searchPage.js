@@ -18,7 +18,7 @@ const sorts = [
   },
   {
     name: "Price Ascending",
-    value: "price",
+    value: "cost",
   },
 ];
 
@@ -28,9 +28,9 @@ function SearchPage() {
   const [courses, setCourses] = useState([]);
   const [active, setActive] = useState(1);
   const [numberPage, setNumberPage] = useState(1);
-  const { id } = useParams();
   const params = new URLSearchParams(window.location.search);
   const keyword  = params.get('keyword');
+  const catId  = params.get('catId');
   const location = useLocation();
 
 
@@ -40,9 +40,9 @@ function SearchPage() {
       setFilter({ query: keyword, page: 1, limit: 10 });    
     }
 
-    if (id)
+    if (catId)
     {
-      setFilter1({ categoryId: id, page: 1, limit: 10 });  
+      setFilter1({ categoryId: catId, page: 1, limit: 10 });  
     }
     setCourses([]);
   }, [location]);
@@ -85,13 +85,11 @@ function SearchPage() {
     if (res.code)
     {
       if (res.data && res.data.rows.length > 0) {
-        const isExist = courses.length > 0 && courses.find(c => +c.id === +res.data[0].id);
-        if (!isExist)
-        {
-          setCourses(courses.concat(res.data.rows));
+          
+          const newCourses = res.pageNumber === 1 ? [] : courses;
+          setCourses(newCourses.concat(res.data.rows));
           setActive(res.pageNumber);
-          setNumberPage(res.pageNumber);
-        }
+          setNumberPage(Math.floor(res.data.count / res.pageSize) + 1);
       }
     }
   };
@@ -106,24 +104,34 @@ function SearchPage() {
     if (res.code)
     {
       if (res.data && res.data.length > 0) {
-        const isExist = courses.length > 0 && courses.find(c => +c.id === +res.data[0].id);
-        if (!isExist)
-        {
-          setCourses(courses.concat(res.data));
+
+          const newCourses = res.pageNumber === 1 ? [] : courses;
+          setCourses(newCourses.concat(res.data));
           setActive(res.pageNumber);
-          setNumberPage(res.pageNumber);
-        }
+          setNumberPage(Math.floor(res.data.count / res.pageSize) + 1);
       }
     }
   };
 
   const onChangeOrder = (e) => {
     if (e) {
-      setFilter({
+
+      if (catId)
+      {
+        setFilter1({
+        ...filter1,
+        sort: e.target.value,
+        page: 1,
+        });
+        
+      } else {
+        setFilter({
         ...filter,
-        order: e.target.value,
+        sort: e.target.value,
         page: 1,
       });
+      }
+      
     }
   };
 

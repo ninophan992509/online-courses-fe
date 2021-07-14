@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import Avatar from "react-avatar";
 import { Link } from "react-router-dom";
@@ -7,12 +7,49 @@ import numeral from "numeral";
 import { Course } from '../../guest/CourseList/courseList';
 import { authContext } from "../../../contexts/AuthContext";
 import { _courses } from "../../guest/HomePage/data";
+import request from "../../../configs/request";
+
 
 function Profile() {
   const { auth } = useContext(authContext);
-    const { user } = auth;
-    const [myCourses, setMyCourses] = useState(_courses);
-    const [favourCourses, setfavourCourses] = useState(_courses);
+  const { user } = auth;
+  const [myCourses, setMyCourses] = useState([]);
+  const [watchList, setWatchList] = useState([]);
+
+  useEffect(() => {
+    if (user)
+    {
+      loadMyCourses();
+      loadWatchList();
+    }
+  }, [user]);
+  
+  const loadMyCourses = async() => {
+    const res = await request({
+      method: "GET",
+      url: `/courses/enrolled`,
+    });
+
+    if (res.code) {
+      setMyCourses(res.data.rows);
+    } else {
+      alert("Lối. Hãy thử lại");
+    }
+  }
+  
+  const loadWatchList = async () => {
+    const res = await request({
+      method: "GET",
+      url: `/courses/watch-list`,
+    });
+
+    if (res.code) {
+      setWatchList(res.data.rows);
+    } else {
+      alert("Lối. Hãy thử lại");
+    }
+  }
+
   return (
     <>
       {user && (
@@ -46,12 +83,17 @@ function Profile() {
                     );
                   })}
               </div>
+              {myCourses.length === 0 && (
+                <div className="my-5">
+                  <small>Bạn chưa mua khóa học nào</small>
+                </div>
+              )}
             </div>{" "}
             <div className="course-body">
               <h3>Watch List</h3>
               <div className="top-purchased-courses">
-                {favourCourses &&
-                  favourCourses.map((course, index) => {
+                {watchList &&
+                  watchList.map((course, index) => {
                     return (
                       <div className="card-wrap-item" key={index}>
                         <Course course={course} type="favour" />
@@ -59,6 +101,11 @@ function Profile() {
                     );
                   })}
               </div>
+              {watchList.length === 0 && (
+                <div className="my-5">
+                  <small>Bạn chưa yêu thích khóa học nào</small>
+                </div>
+              )}
             </div>
           </Col>
         </Row>

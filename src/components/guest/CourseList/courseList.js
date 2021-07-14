@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
-import Slider from "react-slick";
+// import Slider from "react-slick";
 import ImageCustom from "../ImageCustom/imageCustom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,12 +15,13 @@ import { responsive } from "../../../configs/carousel-responsive";
 import Rating from "react-rating";
 import numeral from "numeral";
 import { appContext } from "../../../contexts/AppContext";
-import { ADD_ITEM_TO_CART } from "../../../constants";
+import { ADD_ITEM_TO_CART,  } from "../../../constants";
 
 
 export const Course = ({ course, type }) => {
   const [liked, setLiked] = useState(false);
   const { store, dispatch } = useContext(appContext);
+
   const addToCart = (item) => {
     const carts = store.carts;
     const isExist = carts.find(c => c.id === item.id);
@@ -34,6 +35,9 @@ export const Course = ({ course, type }) => {
       alert('Bạn đã thêm khóa học này vào giỏ hàng');
     }
   }
+
+  
+
 
   return (
     <>
@@ -64,7 +68,7 @@ export const Course = ({ course, type }) => {
                 : `/course/${course.id}`
             }
           >
-            {course.course_name || course.name}
+            {course.course_name ? course.course_name: course.name}
           </Link>
           <div className="card-rating">
             <Rating
@@ -79,13 +83,13 @@ export const Course = ({ course, type }) => {
             )})`}</small>
             <Link
               className="card-link-cs link-cat"
-              to={`/course?category=${course.id}`}
+              to={`/courses/search?catId=${course.categoryId}`}
             >
               {course.category_name}
             </Link>
             <Link
               className="card-link-cs link-teach"
-              to={`/teacher?id=${course.teacher_id}`}
+              to={`/teacher?id=${course.teacherId}`}
             >
               {course.teacher_name}
             </Link>

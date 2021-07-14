@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Card, Table, Accordion, Modal } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import { Player } from "video-react";
 import ImageCustom from "../ImageCustom/imageCustom";
 import { FiShoppingCart } from "react-icons/fi";
@@ -22,9 +22,10 @@ import RatingChart from "../RatingChart/ratingChart";
 import { Course as SingleCourse } from "../CourseList/courseList";
 import request from "../../../configs/request";
 import { appContext } from "../../../contexts/AppContext";
-import { ADD_ITEM_TO_CART } from "../../../constants";
+import { ADD_ITEM_TO_CART, REMOVE_ITEM_IN_CART } from "../../../constants";
+import { authContext } from "../../../contexts/AuthContext";
 
-const Lectures = ({ lectures, onShowPreview }) => {
+const Lectures = ({ lectures, onShowPreview, isPreview }) => {
   return (
     <div className="course-lecture">
       {lectures &&
@@ -33,7 +34,7 @@ const Lectures = ({ lectures, onShowPreview }) => {
             <Card.Body
               key={index}
               className={`course-lecture-item ${
-                lecture.preview ? "preview" : ""
+                lecture.preview || isPreview ? "preview" : ""
               }`}
             >
               <span className="course-lecture-icon">
@@ -43,7 +44,7 @@ const Lectures = ({ lectures, onShowPreview }) => {
                 <span
                   className={`course-lecture-name`}
                   onClick={
-                    lecture.preview ? () => onShowPreview(lecture) : () => {}
+                    lecture.preview || isPreview ? () => onShowPreview(lecture) : () => {}
                   }
                 >
                   {lecture.name}
@@ -79,19 +80,17 @@ const VideoModal = (props) => {
     >
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
-          {lecture ? lecture.name : ""}
+          {lecture ? lecture.title : ""}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Player
           playsInline
           poster="/assets/poster.png"
-          //src={`http://www.youtube.com/watch?v=FLGCGc7sAUw`}
+          src={lecture ? lecture.link : `http://www.youtube.com/watch?v=FLGCGc7sAUw`}
         >
-          <source src="http://www.youtube.com/watch?v=FLGCGc7sAUw" />
+          {/* <source src={lecture ? lecture.link :`http://www.youtube.com/watch?v=FLGCGc7sAUw`} /> */}
         </Player>
-
-        {/* <Plyr type="video" source={ type:'video',source  `http://www.youtube.com/watch?v=FLGCGc7sAUw`} /> */}
       </Modal.Body>
       <Modal.Footer>
         <button className="btn-cs btn-primary-cs" onClick={() => handleClose()}>
@@ -104,17 +103,39 @@ const VideoModal = (props) => {
 
 function Course() {
   const { store, dispatch } = useContext(appContext);
+  const { auth } = useContext(authContext);
+  const { user, role } = auth;
   const [liked, setLiked] = useState(false);
   const [course, setCourse] = useState(_course);
-  const [courses, setCourses] = useState(_courses);
+  const [courses, setCourses] = useState([]);
+  const [watchList, setWatchList] = useState([]);
+  const location = useLocation();
+  const history = useHistory();
   const [chapters, setChapters] = useState({
     chapters: [],
     page: 0,
-    pageNumber:0
+    totalPage:0
+  });
+  const [feedbacks, setFeedbacks] = useState({
+    feedbacks: [],
+    page: 0,
+    totalPage:0
   });
   const [show, setShow] = useState(false);
   const [lecture, setLecture] = useState(null);
   const { id } = useParams();
+
+  useEffect(() => {
+    loadWatchList();
+  }, [user]);
+
+  useEffect(() => {
+    if (watchList.length > 0 && id && watchList.find(c => c.id === id)) {
+      setLiked(true);
+    } else {
+      setLiked(false);
+    }
+  }, [watchList, id])
 
   const loadCourse = async(id) => {
     const res = await request(
@@ -142,7 +163,60 @@ function Course() {
     );
     if (res.code)
     {
-      setChapters({chapters:res.data.rows, page:res.pageNumber, pageSize:res.pageSize });
+      setChapters({chapters:res.data.rows, page:res.pageNumber, totalPage:Math.floor(res.data.count/res.pageSize)+1 });
+    }
+  }
+  
+  const loadFeedbacks = async (id) => {
+    const res = await request(
+      {
+        method: 'GET',
+        url: `/courses/${id}/feedbacks`,
+        params: {
+          feedbacks: feedbacks.page + 1,
+          limit: 10
+        }
+      }
+    );
+    if (res.code)
+    {
+      setFeedbacks({feedbacks:res.data.rows, page:res.pageNumber, totalPage:Math.floor(res.data.count/res.pageSize)+1 });
+    }
+  }
+  
+  const loadLesson = async (id) => {
+    const res = await request(
+      {
+        method: 'GET',
+        url: `/lesson/${id}`,
+      }
+    );
+    if (res.code)
+    {
+      setLecture(res.data.videos[0]);
+    }
+  }
+
+  const loadRelateCourses = async (id) => {
+    const res = await request({
+      method: "GET",
+      url: `/courses/${id}/relate`,
+    });
+    if (res.code) {
+      setCourses(res.data);
+    }
+  }
+
+   const loadWatchList = async () => {
+    const res = await request({
+      method: "GET",
+      url: `/courses/watch-list`,
+    });
+
+    if (res.code) {
+      setWatchList(res.data.rows);
+    } else {
+      setWatchList([]);
     }
   }
 
@@ -151,8 +225,10 @@ function Course() {
     {
       loadCourse(id);
       loadChapters(id);
+      loadFeedbacks(id);
+      loadRelateCourses(id);
     }
-  }, [id])
+  }, [location])
 
   const handleShow = () => {
     setShow(true);
@@ -163,7 +239,7 @@ function Course() {
   };
 
   const onShowPreview = (lecture) => {
-    setLecture(lecture);
+    loadLesson(lecture.id);
     setShow(true);
   };
 
@@ -191,6 +267,74 @@ function Course() {
     } else {
       alert('Bạn đã thêm khóa học này vào giỏ hàng');
     }
+  }
+
+  const onBuyCourse = async(course) => {
+    if (!user || role !== 'student')
+    {
+      history.push({
+        pathname: `/auth?_ref=student`,
+        state: { from: location.pathname },
+      });
+    } else {
+      try {
+         const res = await request({
+        method: 'POST',
+        url: `/courses/${course.id}/enroll`,
+      });
+
+      if (res.code)
+      {
+        dispatch({
+        type: REMOVE_ITEM_IN_CART,
+        payload: course,
+        });
+        history.push('/profile?ref=student');
+        } else {
+        alert('Lối. Hãy thử lại');
+        }
+      } catch (error) {
+        if (error.response && error.response.data)
+        {
+          if (error.response.data.message === 'User enrolled on this course')
+          {
+            dispatch({
+        type: REMOVE_ITEM_IN_CART,
+        payload: course,
+        });
+            alert('Bạn đã mua khóa học này');
+          } 
+        }
+      }
+     
+
+    }
+  }
+
+  const handleWatchList = async (course) => {
+    
+      if (!user || role !== "student") {
+        history.push({
+          pathname: `/auth?_ref=student`,
+          state: { from: location.pathname },
+        });
+      } else {
+        const isExist = watchList.length > 0 && watchList.find(c => c.id === course.id);
+        try {
+          const res = await request({
+            method: isExist ? "DELETE": "POST",
+            url: `/courses/${course.id}/watch-list`,
+          });
+
+          if (res.code) {
+            loadWatchList();
+          } 
+        } catch (error) {
+          if (error.response && error.response.data) {          
+            console.log(error.response.message);
+          }
+        }
+      }
   }
 
   return (
@@ -264,15 +408,18 @@ function Course() {
               <div className="course-buttons">
                 <button
                   className="btn-cs btn-light-cs"
-                  onClick={() => setLiked(!liked)}
+                  onClick={()=>handleWatchList(course)}
                 >
                   {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
                 </button>
-                <button className="btn-cs btn-primary-cs" onClick={()=>addToCart(course)}>
+                {/* {store.carts.length === 0 && store.carts.find(c => c.id === course.id) && ( */}
+                  <button className="btn-cs btn-primary-cs" onClick={()=>addToCart(course)}>
                   {"Add to cart  "}
                   <FiShoppingCart />
-                </button>
-                <button className="btn-cs btn-primary-cs">{"Buy now"}</button>
+                  </button>
+                {/* )} */}
+                
+                <button className="btn-cs btn-primary-cs" onClick={()=>onBuyCourse(course)}>{"Buy now"}</button>
               </div>
             </div>
           </Col>
@@ -364,15 +511,16 @@ function Course() {
                       eventKey={index + 1}
                       className="flex-between-center"
                     >
-                      <div className="section-name">{`Section ${section.stt}: ${section.name}`}</div>
-                      <div>{`${section.lectures.length} lectures • ${numeral(
-                        calcLecturesDurationTotal(section.lectures)
+                      <div className="section-name">{`Section ${/*section.stt*/ index + 1 }: ${/*section.name*/ section.chapter_name}`}</div>
+                      <div>{`${/*section.lectures.length ||*/ section.lessons.length} lectures • ${numeral(
+                        calcLecturesDurationTotal( /*section.lectures*/ section.lessons)
                       ).format("00:00")}`}</div>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey={index + 1}>
                       <Lectures
-                        lectures={section.lectures}
+                        lectures={/*section.lectures*/section.lessons}
                         onShowPreview={onShowPreview}
+                        isPreview={section.is_previewed === 1}
                       />
                     </Accordion.Collapse>
                   </Card>
@@ -384,9 +532,12 @@ function Course() {
                Chưa cập nhật nội dung
             </div>
           )}
-          <div className="flex-center mt-2">
-            <button className="btn-cs btn-primary-cs">Show more contents</button>
-          </div>
+          {chapters.page < chapters.totalPage && (
+            <div className="flex-center mt-2">
+                 <button className="btn-cs btn-primary-cs">Show more contents</button>
+            </div>
+          )}
+          
         </div>
       </div>
       <div className="course-body">
@@ -408,8 +559,8 @@ function Course() {
             </div>
           </div>
           <div className="course-review">
-            {course.reviews &&
-              course.reviews.map((review, index) => {
+            {/*course.reviews &&*/
+              feedbacks.feedbacks.map((review, index) => {
                 return (
                   <div className="course-review-item" key={index}>
                     <span className="course-wrap-review-img">
@@ -420,7 +571,7 @@ function Course() {
                       />
                     </span>
                     <div className="">
-                      <div>{review.user_name}</div>
+                      <div>{review.user_name || review.user ? review.user.fullname: ''}</div>
                       <div>
                         <Rating
                           emptySymbol={<TiStarOutline />}
@@ -430,7 +581,8 @@ function Course() {
                           style={{ fontSize: "1.1rem", color: "#eb910a" }}
                         />{" "}
                         <small>{`  ${moment(
-                          review.review_at
+                          /*review.review_at*/
+                          review.updatedAt
                         ).fromNow()}`}</small>
                       </div>
                       <div>{review.content}</div>
@@ -439,9 +591,12 @@ function Course() {
                 );
               })}
           </div>
-          <div className="flex-center mt-2">
+          {feedbacks.feedbacks.length > 0 && feedbacks.page < feedbacks.totalPage && (
+             <div className="flex-center mt-2">
             <button className="btn-cs btn-primary-cs">Show more reviews</button>
-          </div>
+            </div>
+          )}
+          
         </div>
       </div>
       <div className="course-body">
@@ -451,7 +606,7 @@ function Course() {
             courses.slice(0, 5).map((course, index) => {
               return (
                 <div className="card-wrap-item" key={index}>
-                  <SingleCourse course={course} />
+                  <SingleCourse course={course} type="sale" />
                 </div>
               );
             })}

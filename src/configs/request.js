@@ -25,7 +25,7 @@ const refreshToken = () => {
     accessToken,
     refreshToken,
   };
-
+   console.log(checkExpireToken(accessToken));
   if (checkExpireToken(accessToken)) {
     axios
       .request({
@@ -57,8 +57,10 @@ let cancel;
 
 const request = ({ url, method, data, params }) => {
   // if (cancel !== undefined) cancel();
-  if (!url.match("auth")) refreshToken();
+  
   const token = localStorage.getItem("accessToken");
+  const rfToken = localStorage.getItem("refreshToken");
+  if (!url.match("auth") && token && rfToken) refreshToken();
 
   return axios({
     url: BASE_URL + url,

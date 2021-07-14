@@ -126,11 +126,12 @@
 .top-purchased-courses {
   display: flex;
   flex-wrap: wrap;
-  flex-grow: 3;
 }
 
 .top-purchased-courses .card-wrap-item {
   padding: .5rem .25rem;
+  width: 313px;
+  margin: .25rem;
 }
 
 .top-purchased-courses .card-wrap-item .card {

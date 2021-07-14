@@ -20,7 +20,11 @@ import reducer from "./reducers";
 
 const AuthRoutes = (user, role, query, location) => {
   const ref = query.get("_ref");
-  if (user && role === ref) {
+  console.log(user);
+  console.log(role);
+  console.log(ref);
+  console.log(user && role === ref && role);
+  if (user && role === ref && role) {
     if (location.state && location.state.from) {
       return <Redirect to={location.state.from.pathname} />;
     } else {
@@ -29,6 +33,7 @@ const AuthRoutes = (user, role, query, location) => {
       if (role === "admin") return <Redirect to={"/admin"} />;
     }
   } else {
+    console.log(ref);
     if (ref !== "student" && ref !== "teacher" && ref !== "admin") {
       return <Redirect to={"/not-found"} />;
     }
@@ -59,6 +64,7 @@ function App(props) {
           <Switch>
             <Route
               path="/auth"
+              exact
               render={() => AuthRoutes(user, role, query, location)}
             />
             <Route path="/profile" exact component={Profile} />
@@ -67,7 +73,7 @@ function App(props) {
             <Route component={NotFound} />
           </Switch>
         </Container>
-        <Footer />
+        {/* <Footer /> */}
       </appContext.Provider>
     </div>
   );

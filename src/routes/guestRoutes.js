@@ -10,8 +10,8 @@ const routes = [
     component: <HomePage />,
   },
   {
-    path: "/courses/:id",
-    exact: false,
+    path: "/courses/search",
+    exact: true,
     component: <SearchPage />,
   },
   {

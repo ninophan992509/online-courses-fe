@@ -4,7 +4,7 @@ import { Route, Redirect } from "react-router-dom";
 import { authContext } from "./contexts/AuthContext";
 //import Loading from "./components/Loading/loading";
 
-const PrivateRoute = ({ component: Component, condition, ...rest }) => {
+const PrivateRoute = ({ component: Component, user, role,...rest }) => {
   const { auth } = useContext(authContext);
   const { loading } = auth;
 
@@ -33,12 +33,12 @@ const PrivateRoute = ({ component: Component, condition, ...rest }) => {
     <Route
       {...rest}
       render={(routeProps) =>
-        condition ? (
+        user && user.type === role ? (
           <Component {...routeProps} />
         ) : (
           <Redirect
             to={{
-              pathname: `/auth?ref=${condition.role}`,
+              pathname: `/auth?ref=${role}`,
               state: { from: routeProps.location },
             }}
           />

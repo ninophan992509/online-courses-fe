@@ -1,10 +1,12 @@
-.text-logo.navbar-brand {
+.text-logo.navbar-brand a {
   font-size: 1.7rem;
   padding: 0;
+  color: #fff;
+  text-decoration: none;
 }
 
-.text-logo.navbar-brand:hover,
-.text-logo.navbar-brand:active {
+.text-logo.navbar-brand a:hover,
+.text-logo.navbar-brand a:active {
   text-decoration: none;
 }
 

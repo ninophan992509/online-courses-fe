@@ -1,4 +1,10 @@
-import React, { useState, useContext, useRef, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useContext,
+  useRef,
+  useCallback,
+  useEffect,
+} from "react";
 import {
   Navbar,
   NavDropdown,
@@ -20,7 +26,6 @@ import { useLoadCategories } from "./useLoadCategories";
 import { appContext } from "../../../contexts/AppContext";
 import { REMOVE_ITEM_IN_CART } from "../../../constants";
 import request from "../../../configs/request";
-
 
 const subCategories = [
   {
@@ -91,7 +96,7 @@ const CategoryList = ({ cats, handleHoverItem, variant }) => {
                     }
               }
               onClick={() => {
-                history.push(`/courses/${cat.id}`);
+                history.push(`/courses/search?catId=${cat.id}`);
               }}
             >
               <span className="item-text">{cat.category_name}</span>
@@ -111,30 +116,27 @@ function Header() {
   const { user, role } = auth;
   const [file, setFile] = useState(null);
   const [url, setURL] = useState(null);
-  const [searchVal, setSearchVal] = useState('');
+  const [searchVal, setSearchVal] = useState("");
   const [filter, setFilter] = useState({});
   const location = useLocation();
   const history = useHistory();
   const params = new URLSearchParams(window.location.search);
-  const keyword = params.get('keyword');
-
-
-
+  const keyword = params.get("keyword");
 
   useEffect(() => {
-    if (keyword)
-    {
-      setSearchVal(keyword);    
+    if (keyword) {
+      setSearchVal(keyword);
     }
   }, [location]);
-  
+
   useEffect(() => {
     setFilter({ limit: 10, page: 0 });
   }, []);
 
-  const { loading, error, cats, hasMore, pageNumber } = useLoadCategories(filter);
+  const { loading, error, cats, hasMore, pageNumber } =
+    useLoadCategories(filter);
   const observer = useRef();
-  
+
   const lastCategoryRef = useCallback(
     (node) => {
       if (loading) return;
@@ -143,15 +145,14 @@ function Header() {
         if (entries[0].isIntersecting && hasMore) {
           setFilter({
             ...filter,
-            page: pageNumber + 1
-           })
+            page: pageNumber + 1,
+          });
         }
       });
       if (node) observer.current.observe(node);
     },
     [loading, hasMore]
   );
-
 
   const handleHoverItem = (id) => {
     if (cats && cats.length > 0) {
@@ -169,16 +170,49 @@ function Header() {
     setAuth({ ...auth, user: null, role: "guest" });
   };
 
-
   if (location.pathname === "/auth") return null;
 
   const removeItem = (item) => {
     dispatch({
       type: REMOVE_ITEM_IN_CART,
       payload: item,
-    });  
-  }
+    });
+  };
 
+  const onBuyCourse = async (course) => {
+    if (!user || role !== "student") {
+      history.push(`/auth?_ref=student`, {
+        state: { from: location.pathname },
+      });
+    } else {
+      try {
+        const res = await request({
+          method: "POST",
+          url: `/courses/${course.id}/enroll`,
+        });
+
+        if (res.code) {
+          dispatch({
+            type: REMOVE_ITEM_IN_CART,
+            payload: course,
+          });
+          history.push("/profile?ref=student");
+        } else {
+          alert("Lối. Hãy thử lại");
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          if (error.response.data.message === "User enrolled on this course") {
+            dispatch({
+              type: REMOVE_ITEM_IN_CART,
+              payload: course,
+            });
+            alert("Bạn đã mua khóa học này");
+          }
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -190,8 +224,8 @@ function Header() {
         variant="dark"
       >
         <Container>
-          <Navbar.Brand href="#home" className="text-logo">
-            <span>{"Novus"}</span>
+          <Navbar.Brand className="text-logo">
+            <Link to="/">{"Novus"}</Link>
           </Navbar.Brand>
           {/* <input
             type="file"
@@ -231,10 +265,13 @@ function Header() {
                   </NavDropdown>
                 </Nav>
                 <InputGroup className="input-group-search">
-                  <button className="input-group-prepend" onClick={() => {
-                    if (searchVal)
-                      history.push(`/courses/search?keyword=${searchVal}`);
-                  }}>
+                  <button
+                    className="input-group-prepend"
+                    onClick={() => {
+                      if (searchVal)
+                        history.push(`/courses/search?keyword=${searchVal}`);
+                    }}
+                  >
                     <BsSearch />
                   </button>
                   <input
@@ -243,7 +280,7 @@ function Header() {
                     className="input-form-search form-control"
                     placeholder="Search"
                     value={searchVal}
-                    onChange={(e)=>setSearchVal(e.target.value)}
+                    onChange={(e) => setSearchVal(e.target.value)}
                   />
                 </InputGroup>
               </>
@@ -253,31 +290,45 @@ function Header() {
               {role !== "teacher" && role !== "admin" && (
                 <Dropdown className="dropdown-profile dropdown-cart">
                   <Dropdown.Toggle className="wrap-cart">
-                     <span className="cart-number">{store.carts ? store.carts.length : 0}</span>
-                   <button>
-                    <GiShoppingCart />
-                  </button>
+                    <span className="cart-number">
+                      {store.carts ? store.carts.length : 0}
+                    </span>
+                    <button>
+                      <GiShoppingCart />
+                    </button>
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {store.carts && store.carts.map((c, index) => {
-                      return (
-                        <Dropdown.Item className="dropdown-item">
-                          <div>
-                            <div>{c.course_name}</div>
-                            <div>{c.teacher_name}</div>
-                            <div className="text-number">${c.tuition_fee}</div>
-                          </div>
-                          <div>
-                            <button className="btn-cs btn-primary-cs">Pay</button>
-                            <button className="btn-cs btn-primary-cs btn-delete" onClick={()=>removeItem(c)}><AiFillDelete/></button>
-                          </div>
-                          
-                        </Dropdown.Item>
-                       )
-                    })}
+                    {store.carts &&
+                      store.carts.map((c, index) => {
+                        return (
+                          <Dropdown.Item className="dropdown-item">
+                            <div>
+                              <div>{c.course_name}</div>
+                              <div>{c.teacher_name}</div>
+                              <div className="text-number">
+                                ${c.tuition_fee}
+                              </div>
+                            </div>
+                            <div>
+                              <button
+                                className="btn-cs btn-primary-cs"
+                                onClick={() => onBuyCourse(c)}
+                              >
+                                Buy now
+                              </button>
+                              <button
+                                className="btn-cs btn-primary-cs btn-delete"
+                                onClick={() => removeItem(c)}
+                              >
+                                <AiFillDelete />
+                              </button>
+                            </div>
+                          </Dropdown.Item>
+                        );
+                      })}
                     {store.carts && store.carts.length === 0 && (
                       <Dropdown.Item>
-                         <small>Không có khóa học nào</small>
+                        <small>Không có khóa học nào</small>
                       </Dropdown.Item>
                     )}
                   </Dropdown.Menu>
