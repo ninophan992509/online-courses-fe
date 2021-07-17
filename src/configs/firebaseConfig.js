@@ -69,4 +69,25 @@ const uploadFile = (file, getURL) => {
   );
 };
 
+export const deleteFileOnFirebase = (url, setDelStatus) => {
+  const start = url.indexOf("media%2F") + 8;
+  const end = url.indexOf("?");
+  const fileName = url.substring(start, end);
+  const desertRef = firebase.storage().ref('media/'+ fileName);
+
+  // Delete the file
+  return desertRef
+    .delete()
+    .then(() => {
+      setDelStatus(1);
+      console.log('Delete success');
+    })
+    .catch((error) => {
+      setDelStatus(-1);
+      console.log("Delete failed",error);
+    });
+};
+
+
+
 export default uploadFile;

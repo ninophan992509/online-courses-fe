@@ -15,8 +15,8 @@ import Rating from "react-rating";
 import numeral from "numeral";
 import moment from "moment";
 import "./course.css";
-import Plyr from "plyr-react";
-import "plyr-react/dist/plyr.css";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { _course, _courses } from "../HomePage/data";
 import RatingChart from "../RatingChart/ratingChart";
 import { Course as SingleCourse } from "../CourseList/courseList";
@@ -44,7 +44,9 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
                 <span
                   className={`course-lecture-name`}
                   onClick={
-                    lecture.preview || isPreview ? () => onShowPreview(lecture) : () => {}
+                    lecture.preview || isPreview
+                      ? () => onShowPreview(lecture)
+                      : () => {}
                   }
                 >
                   {lecture.name}
@@ -60,14 +62,12 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
 
 const VideoModal = (props) => {
   const { handleClose, lecture } = props;
-  const [link, setLink] = useState(
-    "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
-  );
+  const [link, setLink] = useState("");
 
   useEffect(() => {
     if (lecture) {
-      setLink(lecture.link);
-      console.log(lecture.link);
+      setLink(lecture.video);
+      console.log(lecture.video);
     }
   }, [lecture]);
 
@@ -80,17 +80,19 @@ const VideoModal = (props) => {
     >
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
-          {lecture ? lecture.title : ""}
+          {lecture ? lecture.name : ""}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Player
           playsInline
           poster="/assets/poster.png"
-          src={lecture ? lecture.link : `http://www.youtube.com/watch?v=FLGCGc7sAUw`}
-        >
-          {/* <source src={lecture ? lecture.link :`http://www.youtube.com/watch?v=FLGCGc7sAUw`} /> */}
-        </Player>
+          src={
+            lecture
+              ? lecture.video
+              : `http://www.youtube.com/watch?v=FLGCGc7sAUw`
+          }
+        />
       </Modal.Body>
       <Modal.Footer>
         <button className="btn-cs btn-primary-cs" onClick={() => handleClose()}>
@@ -114,12 +116,12 @@ function Course() {
   const [chapters, setChapters] = useState({
     chapters: [],
     page: 0,
-    totalPage:0
+    totalPage: 0,
   });
   const [feedbacks, setFeedbacks] = useState({
     feedbacks: [],
     page: 0,
-    totalPage:0
+    totalPage: 0,
   });
   const [show, setShow] = useState(false);
   const [lecture, setLecture] = useState(null);
@@ -129,73 +131,69 @@ function Course() {
     loadWatchList();
   }, [user]);
 
-  useEffect(() => {
-    if (watchList.length > 0 && id && watchList.find(c => c.id === id)) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-  }, [watchList, id])
+  // useEffect(() => {
+  //   if (watchList.length > 0 && id && watchList.find((c) => c.id === id)) {
+  //     setLiked(true);
+  //   } else {
+  //     setLiked(false);
+  //   }
+  // }, [watchList, id]);
 
-  const loadCourse = async(id) => {
-    const res = await request(
-      {
-        method: 'GET',
-        url: `/courses/${id}`,
-      }
-    );
-    if (res.code)
-    {
+  const loadCourse = async (id) => {
+    const res = await request({
+      method: "GET",
+      url: `/courses/${id}`,
+    });
+    if (res.code) {
       setCourse(res.data);
     }
-  }
-  
+  };
+
   const loadChapters = async (id) => {
-    const res = await request(
-      {
-        method: 'GET',
-        url: `/courses/${id}/chapters`,
-        params: {
-          page: chapters.page + 1,
-          limit: 10
-        }
-      }
-    );
-    if (res.code)
-    {
-      setChapters({chapters:res.data.rows, page:res.pageNumber, totalPage:Math.floor(res.data.count/res.pageSize)+1 });
+    const res = await request({
+      method: "GET",
+      url: `/courses/${id}/chapters`,
+      params: {
+        page: chapters.page + 1,
+        limit: 10,
+      },
+    });
+    if (res.code) {
+      setChapters({
+        chapters: res.data.rows,
+        page: res.pageNumber,
+        totalPage: Math.floor(res.data.count / res.pageSize) + 1,
+      });
     }
-  }
-  
+  };
+
   const loadFeedbacks = async (id) => {
-    const res = await request(
-      {
-        method: 'GET',
-        url: `/courses/${id}/feedbacks`,
-        params: {
-          feedbacks: feedbacks.page + 1,
-          limit: 10
-        }
-      }
-    );
-    if (res.code)
-    {
-      setFeedbacks({feedbacks:res.data.rows, page:res.pageNumber, totalPage:Math.floor(res.data.count/res.pageSize)+1 });
+    const res = await request({
+      method: "GET",
+      url: `/courses/${id}/feedbacks`,
+      params: {
+        feedbacks: feedbacks.page + 1,
+        limit: 10,
+      },
+    });
+    if (res.code) {
+      setFeedbacks({
+        feedbacks: res.data.rows,
+        page: res.pageNumber,
+        totalPage: Math.floor(res.data.count / res.pageSize) + 1,
+      });
     }
-  }
-  
+  };
+
   const loadLesson = async (id) => {
-    const res = await request(
-      {
-        method: 'GET',
-        url: `/lesson/${id}`,
-      }
-    );
-    if (res.code)
-    {
-      setLecture(res.data.videos[0]);
+    const res = await request({
+      method: "GET",
+      url: `/lesson/${id}`,
+    });
+    if (res.code) {
+      setLecture(res.data);
     }
-  }
+  };
 
   const loadRelateCourses = async (id) => {
     const res = await request({
@@ -205,9 +203,9 @@ function Course() {
     if (res.code) {
       setCourses(res.data);
     }
-  }
+  };
 
-   const loadWatchList = async () => {
+  const loadWatchList = async () => {
     const res = await request({
       method: "GET",
       url: `/courses/watch-list`,
@@ -215,20 +213,23 @@ function Course() {
 
     if (res.code) {
       setWatchList(res.data.rows);
+      const isExist =
+        res.data.rows.length > 0 &&
+        res.data.rows.find((c) => c.id === course.id);
+      setLiked(isExist ? true : false);
     } else {
       setWatchList([]);
     }
-  }
+  };
 
   useEffect(() => {
-    if (id)
-    {
+    if (id) {
       loadCourse(id);
       loadChapters(id);
       loadFeedbacks(id);
       loadRelateCourses(id);
     }
-  }, [location])
+  }, [location]);
 
   const handleShow = () => {
     setShow(true);
@@ -253,89 +254,81 @@ function Course() {
     }
     return 0;
   };
- 
 
   const addToCart = (item) => {
     const carts = store.carts;
-    const isExist = carts.find(c => c.id === item.id);
-    if (!isExist)
-    {
+    const isExist = carts.find((c) => c.id === item.id);
+    if (!isExist) {
       dispatch({
         type: ADD_ITEM_TO_CART,
         payload: item,
       });
     } else {
-      alert('Bạn đã thêm khóa học này vào giỏ hàng');
+      alert("Bạn đã thêm khóa học này vào giỏ hàng");
     }
-  }
+  };
 
-  const onBuyCourse = async(course) => {
-    if (!user || role !== 'student')
-    {
+  const onBuyCourse = async (course) => {
+    if (!user || role !== "student") {
       history.push({
         pathname: `/auth?_ref=student`,
         state: { from: location.pathname },
       });
     } else {
       try {
-         const res = await request({
-        method: 'POST',
-        url: `/courses/${course.id}/enroll`,
-      });
-
-      if (res.code)
-      {
-        dispatch({
-        type: REMOVE_ITEM_IN_CART,
-        payload: course,
+        const res = await request({
+          method: "POST",
+          url: `/courses/${course.id}/enroll`,
         });
-        history.push('/profile?ref=student');
+
+        if (res.code) {
+          dispatch({
+            type: REMOVE_ITEM_IN_CART,
+            payload: course,
+          });
+          history.push("/profile?ref=student");
         } else {
-        alert('Lối. Hãy thử lại');
+          alert("Lối. Hãy thử lại");
         }
       } catch (error) {
-        if (error.response && error.response.data)
-        {
-          if (error.response.data.message === 'User enrolled on this course')
-          {
+        if (error.response && error.response.data) {
+          if (error.response.data.message === "User enrolled on this course") {
             dispatch({
-        type: REMOVE_ITEM_IN_CART,
-        payload: course,
-        });
-            alert('Bạn đã mua khóa học này');
-          } 
-        }
-      }
-     
-
-    }
-  }
-
-  const handleWatchList = async (course) => {
-    
-      if (!user || role !== "student") {
-        history.push({
-          pathname: `/auth?_ref=student`,
-          state: { from: location.pathname },
-        });
-      } else {
-        const isExist = watchList.length > 0 && watchList.find(c => c.id === course.id);
-        try {
-          const res = await request({
-            method: isExist ? "DELETE": "POST",
-            url: `/courses/${course.id}/watch-list`,
-          });
-
-          if (res.code) {
-            loadWatchList();
-          } 
-        } catch (error) {
-          if (error.response && error.response.data) {          
-            console.log(error.response.message);
+              type: REMOVE_ITEM_IN_CART,
+              payload: course,
+            });
+            alert("Bạn đã mua khóa học này");
           }
         }
       }
-  }
+    }
+  };
+
+  const handleWatchList = async (course) => {
+    if (!user || role !== "student") {
+      history.push({
+        pathname: `/auth?_ref=student`,
+        state: { from: location.pathname },
+      });
+    } else {
+      const isExist =
+        watchList.length > 0 && watchList.find((c) => c.id === course.id);
+      try {
+        const res = await request({
+          method: isExist ? "DELETE" : "POST",
+          url: `/courses/${course.id}/watch-list`,
+        });
+
+        if (res.code) {
+          loadWatchList();
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          console.log(error.response.message);
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -349,7 +342,11 @@ function Course() {
         <Row className="course-row-head">
           <Col md="8" className="left">
             <div>
-              <ImageCustom width="100%" className="card-25-9" />
+              <ImageCustom
+                width="100%"
+                className="card-25-9"
+                src={course.picture}
+              />
             </div>
             <div className="course-info-head">
               <div className="course-wrap-badge">
@@ -393,14 +390,22 @@ function Course() {
               </div>
               <div>
                 Last updated:{" "}
-                <span className="text-number">{course.last_update || moment(course.updateAt).format('L')}</span>
+                <span className="text-number">
+                  {course.last_update || moment(course.updateAt).format("L")}
+                </span>
               </div>
               <div className="flex-start-center course-price">
-                {(course.sale_price || +course.sale !== 0 )&& (
-                  <span className="card-sale">${course.sale_price || course.sale}</span>
+                {(course.sale_price || +course.sale !== 0) && (
+                  <span className="card-sale">
+                    ${course.sale_price || course.sale}
+                  </span>
                 )}
                 <span
-                  className={(course.sale_price || +course.sale  !== 0 )? "card-price" : "card-sale"}
+                  className={
+                    course.sale_price || +course.sale !== 0
+                      ? "card-price"
+                      : "card-sale"
+                  }
                 >
                   ${course.price || course.tuition_fee}
                 </span>
@@ -408,18 +413,26 @@ function Course() {
               <div className="course-buttons">
                 <button
                   className="btn-cs btn-light-cs"
-                  onClick={()=>handleWatchList(course)}
+                  onClick={() => handleWatchList(course)}
                 >
                   {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
                 </button>
                 {/* {store.carts.length === 0 && store.carts.find(c => c.id === course.id) && ( */}
-                  <button className="btn-cs btn-primary-cs" onClick={()=>addToCart(course)}>
+                <button
+                  className="btn-cs btn-primary-cs"
+                  onClick={() => addToCart(course)}
+                >
                   {"Add to cart  "}
                   <FiShoppingCart />
-                  </button>
+                </button>
                 {/* )} */}
-                
-                <button className="btn-cs btn-primary-cs" onClick={()=>onBuyCourse(course)}>{"Buy now"}</button>
+
+                <button
+                  className="btn-cs btn-primary-cs"
+                  onClick={() => onBuyCourse(course)}
+                >
+                  {"Buy now"}
+                </button>
               </div>
             </div>
           </Col>
@@ -494,15 +507,24 @@ function Course() {
       <div className="course-body">
         <div className="course-description">
           <h3>Description</h3>
-          <p>{course.full_description || course.description  }</p>
+          <p>{course.full_description}</p>
+          {course.description && (
+            <ReactQuill
+              value={course.description}
+              readOnly={true}
+              theme={"bubble"}
+            />
+          )}
         </div>
       </div>
       <div className="course-body">
         <div className="course-content">
-          <h3>Course Content</h3>
-          <div></div>
+          <div className="flex-between-center">
+            <h3>Course Content</h3>
+            <small>{course.status === 1 ? "Full section" : "Updating"}</small>
+          </div>
           <Accordion defaultActiveKey="0" className="course-section">
-            {chapters.chapters.length > 0 && 
+            {chapters.chapters.length > 0 &&
               chapters.chapters.map((section, index) => {
                 return (
                   <Card key={index}>
@@ -511,14 +533,20 @@ function Course() {
                       eventKey={index + 1}
                       className="flex-between-center"
                     >
-                      <div className="section-name">{`Section ${/*section.stt*/ index + 1 }: ${/*section.name*/ section.chapter_name}`}</div>
-                      <div>{`${/*section.lectures.length ||*/ section.lessons.length} lectures • ${numeral(
-                        calcLecturesDurationTotal( /*section.lectures*/ section.lessons)
+                      <div className="section-name">{`Section ${
+                        /*section.stt*/ index + 1
+                      }: ${/*section.name*/ section.chapter_name}`}</div>
+                      <div>{`${
+                        /*section.lectures.length ||*/ section.lessons.length
+                      } lectures • ${numeral(
+                        calcLecturesDurationTotal(
+                          /*section.lectures*/ section.lessons
+                        )
                       ).format("00:00")}`}</div>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey={index + 1}>
                       <Lectures
-                        lectures={/*section.lectures*/section.lessons}
+                        lectures={/*section.lectures*/ section.lessons}
                         onShowPreview={onShowPreview}
                         isPreview={section.is_previewed === 1}
                       />
@@ -528,16 +556,15 @@ function Course() {
               })}
           </Accordion>
           {chapters.chapters.length === 0 && (
-            <div className="text-not-found">
-               Chưa cập nhật nội dung
-            </div>
+            <div className="text-not-found">Chưa cập nhật nội dung</div>
           )}
           {chapters.page < chapters.totalPage && (
             <div className="flex-center mt-2">
-                 <button className="btn-cs btn-primary-cs">Show more contents</button>
+              <button className="btn-cs btn-primary-cs">
+                Show more contents
+              </button>
             </div>
           )}
-          
         </div>
       </div>
       <div className="course-body">
@@ -559,7 +586,8 @@ function Course() {
             </div>
           </div>
           <div className="course-review">
-            {/*course.reviews &&*/
+            {
+              /*course.reviews &&*/
               feedbacks.feedbacks.map((review, index) => {
                 return (
                   <div className="course-review-item" key={index}>
@@ -571,7 +599,11 @@ function Course() {
                       />
                     </span>
                     <div className="">
-                      <div>{review.user_name || review.user ? review.user.fullname: ''}</div>
+                      <div>
+                        {review.user_name || review.user
+                          ? review.user.fullname
+                          : ""}
+                      </div>
                       <div>
                         <Rating
                           emptySymbol={<TiStarOutline />}
@@ -589,14 +621,17 @@ function Course() {
                     </div>
                   </div>
                 );
-              })}
+              })
+            }
           </div>
-          {feedbacks.feedbacks.length > 0 && feedbacks.page < feedbacks.totalPage && (
-             <div className="flex-center mt-2">
-            <button className="btn-cs btn-primary-cs">Show more reviews</button>
-            </div>
-          )}
-          
+          {feedbacks.feedbacks.length > 0 &&
+            feedbacks.page < feedbacks.totalPage && (
+              <div className="flex-center mt-2">
+                <button className="btn-cs btn-primary-cs">
+                  Show more reviews
+                </button>
+              </div>
+            )}
         </div>
       </div>
       <div className="course-body">

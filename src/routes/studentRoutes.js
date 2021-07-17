@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
-import HomePage from "../components/guest/HomePage";
+import { withRouter } from "react-router-dom";
+import Profile from "../components/student/Profile/profile";
 
 import { authContext } from "../contexts/AuthContext";
 import PrivateRoute from "./PrivateRoutes";
 const routes = [
   {
-    path: "/profile?ref=student",
+    path: "/profile",
     exact: true,
-    main: () => <HomePage />,
+    main:  <Profile />,
   },
 ];
 
@@ -29,4 +30,4 @@ const StudentRoute = () => {
   });
   return studentRoute;
 };
-export default StudentRoute;
+export default withRouter(StudentRoute);

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Card } from "react-bootstrap";
 // import Slider from "react-slick";
 import ImageCustom from "../ImageCustom/imageCustom";
@@ -21,7 +21,7 @@ import { ADD_ITEM_TO_CART,  } from "../../../constants";
 export const Course = ({ course, type }) => {
   const [liked, setLiked] = useState(false);
   const { store, dispatch } = useContext(appContext);
-
+  const history = useHistory();
   const addToCart = (item) => {
     const carts = store.carts;
     const isExist = carts.find(c => c.id === item.id);
@@ -56,20 +56,20 @@ export const Course = ({ course, type }) => {
 
         <ImageCustom
           className="card-16-9"
-          src={course.image}
+          src={course.picture}
           borderRadius="2px"
         />
         <Card.Body>
-          <Link
+          <div
             className="card-title"
-            to={
-              type === "private"
-                ? `/student-courses/${course.id}`
-                : `/course/${course.id}`
-            }
+            onClick={() => {
+              if (type === "private")
+                history.push(`/student-course/${course.id}`);
+              else history.push(`/course/${course.id}`); 
+            }}
           >
             {course.course_name ? course.course_name: course.name}
-          </Link>
+          </div>
           <div className="card-rating">
             <Rating
               emptySymbol={<TiStarOutline />}

@@ -1,0 +1,49 @@
+.input-number {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.custom-switch input {
+  width: 30px;
+  height: 30px;
+  margin: 0.25rem;
+}
+
+.list-chapter {
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.list-lesson {
+  margin: 1rem 0 4rem 0;
+  padding-left: 1rem;
+  font-weight: 500;
+}
+
+.list-chapter .col-md-9 {
+  display: flex;
+  align-items: center;
+}
+
+.list-chapter button {
+  width: 36px !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list-lesson button{
+     width: 30px !important;
+  min-width: 30px !important;
+  height: 30px !important;
+  color: #fff;
+  background-color: #1F1535;
+  border: #1F1535;
+}
+
+#videoInput{
+    opacity: 0;
+}

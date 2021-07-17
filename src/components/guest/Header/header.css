@@ -9,9 +9,13 @@
 .text-logo.navbar-brand a:active {
   text-decoration: none;
 }
-
+.text-logo sup{
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
 .navbar-app.navbar-dark {
-  background-color: #1f1535 !important;
+  background-color: #eb910a !important;
 }
 
 .dropdown-wrap-list.dropdown-item {
@@ -250,7 +254,12 @@
   justify-content: space-between;
   align-items: center;
   font-weight: 500;
-  width: 320px;
+  font-size: .9rem;
+}
+
+.dropdown-cart .dropdown-item .cart-info{
+   width: 300px;
+   white-space: pre-line;
 }
 
 .dropdown-cart .dropdown-item:hover,

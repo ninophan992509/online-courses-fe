@@ -168,6 +168,7 @@ function Header() {
 
   const handleLogOut = () => {
     setAuth({ ...auth, user: null, role: "guest" });
+    localStorage.clear();
   };
 
   if (location.pathname === "/auth") return null;
@@ -225,7 +226,14 @@ function Header() {
       >
         <Container>
           <Navbar.Brand className="text-logo">
-            <Link to="/">{"Novus"}</Link>
+            {role === "teacher" && (
+              <Link to="/dashboard">
+                {"Novus"}
+                <sup>{role === "teacher" ? "Teacher" : ""}</sup>
+              </Link>
+            )}
+
+            {role !== "teacher" && <Link to="/">{"Novus"}</Link>}
           </Navbar.Brand>
           {/* <input
             type="file"
@@ -302,7 +310,7 @@ function Header() {
                       store.carts.map((c, index) => {
                         return (
                           <Dropdown.Item className="dropdown-item">
-                            <div>
+                            <div className="cart-info">
                               <div>{c.course_name}</div>
                               <div>{c.teacher_name}</div>
                               <div className="text-number">
@@ -360,11 +368,18 @@ function Header() {
                     {user.fullname}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Link className="dropdown-item" to="/profile">
-                      Profile
-                    </Link>
+                    {/* {role === "teacher" && (
+                      <>
+                        <Link className="dropdown-item" to="/dashboard">
+                          My Courses
+                        </Link>
+                      </>
+                    )} */}
                     {role === "student" && (
                       <>
+                        <Link className="dropdown-item" to="/profile">
+                          Profile
+                        </Link>
                         <Link className="dropdown-item" to="/watch-list">
                           Watch List
                         </Link>

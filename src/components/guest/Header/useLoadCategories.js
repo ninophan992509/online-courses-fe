@@ -24,7 +24,7 @@ export const useLoadCategories = (filter) => {
                 method: 'GET',
                 params: filter
                 });
-    
+                
                 if (res.data.rows.length > 0) {
                     setCats(cats.concat(res.data.rows));
                     setHasMore(true);

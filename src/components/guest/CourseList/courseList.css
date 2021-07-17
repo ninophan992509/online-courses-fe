@@ -5,12 +5,12 @@
 .list-title {
   text-transform: initial;
   font-weight: 700;
-  color: #fff;
+  background-color: #fff;
   margin-left: auto;
   margin-right: auto;
   padding: 0.5rem;
   font-size: 2rem;
-  background-color: #1f15352e;
+  color: #1f1535;
   width: fit-content;
 }
 
@@ -24,7 +24,8 @@
 .card-cs:hover {
   font-family: "Work Sans", sans-serif;
   border: none;
-  box-shadow: 0 6px 26px 0 rgb(0 0 0 / 20%);
+  /* box-shadow: 0 6px 26px 0 rgb(0 0 0 / 20%); */
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
   color: inherit;
   text-decoration: inherit;
   position: relative;
@@ -58,13 +59,14 @@
 }
 
 .card-cs .card-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 0;
-  max-height: 43px;
+  height: 43px;
   overflow: hidden;
   text-decoration: none;
   color: #000;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .card-link-cs {

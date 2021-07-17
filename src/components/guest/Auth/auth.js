@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Container, InputGroup, Tab, Nav } from "react-bootstrap";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams, useLocation } from "react-router-dom";
 import "./auth.css";
 import { BiUser } from "react-icons/bi";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -65,6 +65,7 @@ export function Login({ _ref }) {
   const [password, setPassword] = useState("");
   const { auth, setAuth } = useContext(authContext);
   const history = useHistory();
+  const location = useLocation();
 
   const handleEmailInput = (e) => {
     const value = e ? e.target.value : email;
@@ -137,8 +138,25 @@ export function Login({ _ref }) {
           localStorage.setItem("accessToken", res.data.accessToken);
           localStorage.setItem("refreshToken", res.data.rfToken);
           localStorage.setItem("userInfo", JSON.stringify(res.data.userInfo));
-
-          history.push("/");
+           
+          const role = res.data.userInfo.type;
+          if (role === 'student')
+          {
+             if(location && location.state && location.state.from)
+             {
+               history.push(location.state.from);
+             } else {
+               history.push("/");
+             }
+          }
+          
+          if (role === 'teacher')
+          {
+             
+               history.push("/dashboard");
+             
+          }
+          
         }
       } catch (error) {
         if (error.response && error.response.data) {

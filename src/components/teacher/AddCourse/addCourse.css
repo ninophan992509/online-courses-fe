@@ -1,0 +1,40 @@
+.new-course{
+    padding: 1rem;
+    padding-bottom: 3rem;
+    margin-bottom: 1rem;
+    height: 100%;
+}
+
+.title-heading{
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 700;
+    color: #1F1535;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+
+}
+
+.select-cat{
+    width: 100%;
+    height: 38px;
+}
+
+.new-course .quill{
+   height: 200px;
+}
+
+.wrap-img-bg{
+    width: 50%;
+    height: auto;
+    margin-top: 1rem;
+}
+
+.wrap-img-bg img{
+    width: 100%;
+    height: 100%;
+}
+
+.form-label{
+    font-weight: 600;
+}

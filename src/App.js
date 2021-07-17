@@ -4,7 +4,6 @@ import { Container } from "react-bootstrap";
 import Auth from "./components/guest/Auth/auth";
 import Header from "./components/guest/Header/header";
 import Footer from "./components/guest/Footer/footer";
-import Profile from "./components/student/Profile/profile";
 import {
   Route,
   Switch,
@@ -14,16 +13,18 @@ import {
 import { authContext } from "./contexts/AuthContext";
 import GuestRoute from "./routes/guestRoutes";
 import NotFound from "./components/guest/NotFound/notFound";
+import AddCourse from "./components/teacher/AddCourse/addCourse";
 import { useQuery } from "./services/useQuery";
 import { appContext } from "./contexts/AppContext";
 import reducer from "./reducers";
+import PrivateRoute from "./routes/PrivateRoutes";
+import Profile from "./components/student/Profile/profile";
+import DashBoard from "./components/teacher/DashBoard/dashBoard";
+import StudentCourse from "./components/student/StudentCourse/studentCourse";
+import EditCourse from "./components/teacher/EditCourse/editCourse";
 
 const AuthRoutes = (user, role, query, location) => {
   const ref = query.get("_ref");
-  console.log(user);
-  console.log(role);
-  console.log(ref);
-  console.log(user && role === ref && role);
   if (user && role === ref && role) {
     if (location.state && location.state.from) {
       return <Redirect to={location.state.from.pathname} />;
@@ -33,7 +34,6 @@ const AuthRoutes = (user, role, query, location) => {
       if (role === "admin") return <Redirect to={"/admin"} />;
     }
   } else {
-    console.log(ref);
     if (ref !== "student" && ref !== "teacher" && ref !== "admin") {
       return <Redirect to={"/not-found"} />;
     }
@@ -48,7 +48,7 @@ const initialState = {
   carts: cartLocal ? JSON.parse(cartLocal) : [],
 }
 
-function App(props) {
+function App() {
   const location = useLocation();
   const query = useQuery();
   const { auth } = useContext(authContext);
@@ -58,7 +58,7 @@ function App(props) {
 
   return (
     <div className="App">
-      <appContext.Provider value={{store, dispatch}} >
+      <appContext.Provider value={{ store, dispatch }}>
         <Header />
         <Container className="mt-3">
           <Switch>
@@ -67,7 +67,36 @@ function App(props) {
               exact
               render={() => AuthRoutes(user, role, query, location)}
             />
-            <Route path="/profile" exact component={Profile} />
+            <Route path="/new-course" exact component={AddCourse} />
+            <PrivateRoute
+              path={'/profile'}
+              exact
+              component={Profile}
+              user={user}
+              role="student"
+            />
+            
+            <PrivateRoute
+              path={'/student-course/:id'}
+              component={StudentCourse}
+              user={user}
+              role="student"
+            />
+            <PrivateRoute
+              path={'/dashboard'}
+              exact
+              component={DashBoard}
+              user={user}
+              role="teacher"
+            />
+            
+            <PrivateRoute
+              path={'/edit-course/:id'}
+              component={EditCourse}
+              user={user}
+              role="teacher"
+            />
+
             <Route path="/" exact render={() => <Redirect to="/home" />} />
             <GuestRoute />
             <Route component={NotFound} />

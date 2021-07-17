@@ -1,10 +1,11 @@
 .course-head,
 .course-body {
-  background-color: #1f1535;
+  background-color: #fff;
   border-radius: 2px;
   padding: 1rem;
   font-family: "Work Sans", sans-serif;
-  color: #fff;
+  color: #1f1535;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .course-body {
@@ -26,7 +27,7 @@
 
 .course-info-head {
   width: 100%;
-  color: #fff;
+  color: #1f1535;
   height: max-content;
   padding-top: 1rem;
 }
@@ -44,7 +45,7 @@
 }
 
 .table-info-teacher {
-  color: #fff;
+  color: #1f1535;
 }
 
 .card-badge.course-badge {
@@ -54,7 +55,7 @@
 
 .course-price .card-sale,
 .course-price .card-price {
-  color: #fff;
+  color: #1f1535;
   font-size: 2rem;
 }
 

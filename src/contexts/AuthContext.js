@@ -32,20 +32,17 @@ const AuthProvider = ({ children }) => {
         decode.type === userInfo.type
       ) {
         setAuth({
+          ...auth,
           user: userInfo,
           role: decode.type,
-          loading: false,
         });
         return true;
       }
     }
-
-    // setAuth({
-    //   loading: true,
-    //   user: null,
-    //   role: "student",
-    //   cart: [],
-    // });
+    setAuth({
+      ...auth,
+      loading: false,
+    });
   }, []);
 
   useEffect(() => {

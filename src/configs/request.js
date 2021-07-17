@@ -25,7 +25,7 @@ const refreshToken = () => {
     accessToken,
     refreshToken,
   };
-   console.log(checkExpireToken(accessToken));
+
   if (checkExpireToken(accessToken)) {
     axios
       .request({

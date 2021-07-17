@@ -103,10 +103,10 @@ function SearchPage() {
 
     if (res.code)
     {
-      if (res.data && res.data.length > 0) {
+      if (res.data && res.data.rows.length > 0) {
 
           const newCourses = res.pageNumber === 1 ? [] : courses;
-          setCourses(newCourses.concat(res.data));
+          setCourses(newCourses.concat(res.data.rows));
           setActive(res.pageNumber);
           setNumberPage(Math.floor(res.data.count / res.pageSize) + 1);
       }

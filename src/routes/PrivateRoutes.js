@@ -1,12 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Spinner } from "react-bootstrap";
 import { Route, Redirect } from "react-router-dom";
-import { authContext } from "./contexts/AuthContext";
+import { authContext } from "../contexts/AuthContext";
 //import Loading from "./components/Loading/loading";
 
-const PrivateRoute = ({ component: Component, user, role,...rest }) => {
+const PrivateRoute = ({ component: Component, user, role, ...rest }) => {
   const { auth } = useContext(authContext);
   const { loading } = auth;
+
 
   if (loading) {
     return (
@@ -16,11 +17,11 @@ const PrivateRoute = ({ component: Component, user, role,...rest }) => {
           return (
             <div
               className="flex-column-center w-100"
-              style={{ height: "100vh", background: "#fff" }}
+              style={{ height: "100vh" }}
             >
-              <div className="text-loading">
+              <div className="text-loading text-center">
                 <Spinner animation="border" variant="dark" />
-                Loading...
+                <div>Loading...</div>
               </div>
             </div>
           );
@@ -38,7 +39,8 @@ const PrivateRoute = ({ component: Component, user, role,...rest }) => {
         ) : (
           <Redirect
             to={{
-              pathname: `/auth?ref=${role}`,
+              pathname: `/auth`,
+              search:`?_ref=${role}`,
               state: { from: routeProps.location },
             }}
           />

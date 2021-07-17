@@ -5,8 +5,8 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /*background: #f3f7f7 !important;*/
-  background: #eb910a !important;
+  background: #fff !important;
+  /* background: #eb910a !important; */
   font-family: "Raleway", sans-serif !important;
 }
 
@@ -178,10 +178,14 @@ code {
   transform: translateY(-2px);
   transition-duration: 0.3s;
   animation: transform 0.3s ease-in-out;
+  color: #fff;
+  background-color:#ffbd3b ;
 }
 
 .btn-light-cs:active {
   box-shadow: 0 10px 12px 0 rgba(255, 255, 255, 0.61);
+  color: #fff;
+  background-color:#ffbd3b ;
 }
 
 .btn-icon {
