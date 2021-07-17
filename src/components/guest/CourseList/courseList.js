@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { Card } from "react-bootstrap";
 // import Slider from "react-slick";
 import ImageCustom from "../ImageCustom/imageCustom";
@@ -15,29 +15,54 @@ import { responsive } from "../../../configs/carousel-responsive";
 import Rating from "react-rating";
 import numeral from "numeral";
 import { appContext } from "../../../contexts/AppContext";
-import { ADD_ITEM_TO_CART,  } from "../../../constants";
-
+import { ADD_ITEM_TO_CART } from "../../../constants";
+import { authContext } from "../../../contexts/AuthContext";
+import request from "../../../configs/request";
 
 export const Course = ({ course, type }) => {
   const [liked, setLiked] = useState(false);
   const { store, dispatch } = useContext(appContext);
+  const { auth } = useContext(authContext);
+  const { user, role } = auth;
   const history = useHistory();
+  const location = useLocation();
   const addToCart = (item) => {
     const carts = store.carts;
-    const isExist = carts.find(c => c.id === item.id);
-    if (!isExist)
-    {
+    const isExist = carts.find((c) => c.id === item.id);
+    if (!isExist) {
       dispatch({
         type: ADD_ITEM_TO_CART,
         payload: item,
       });
     } else {
-      alert('Bạn đã thêm khóa học này vào giỏ hàng');
+      alert("Bạn đã thêm khóa học này vào giỏ hàng");
     }
-  }
+  };
 
-  
+  const handleWatchList = async (course) => {
+    if (!user || role !== "student") {
+      history.push(`/auth?_ref=student`, {
+        state: { from: location.pathname },
+      });
+    } else {
+      try {
+        const res = await request({
+          method: "DELETE",
+          url: `/courses/${course.id}/watch-list`,
+        });
 
+        if (res.code) {
+          history.push(`/profile`, {
+            state: { unlike: true },
+          });
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          console.log(error.response.message);
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -65,10 +90,10 @@ export const Course = ({ course, type }) => {
             onClick={() => {
               if (type === "private")
                 history.push(`/student-course/${course.id}`);
-              else history.push(`/course/${course.id}`); 
+              else history.push(`/course/${course.id}`);
             }}
           >
-            {course.course_name ? course.course_name: course.name}
+            {course.course_name ? course.course_name : course.name}
           </div>
           <div className="card-rating">
             <Rating
@@ -96,14 +121,14 @@ export const Course = ({ course, type }) => {
           </div>
           {type === "sale" && (
             <div className="flex-end-center">
-              {(course.sale_price || +course.sale !== 0 ) && (
+              {(course.sale_price || +course.sale !== 0) && (
                 <span className="card-sale">
                   ${course.sale || course.sale_price}
                 </span>
               )}
               <span
                 className={
-                  (course.sale || course.sale_price) ? "card-price" : "card-sale"
+                  course.sale || course.sale_price ? "card-price" : "card-sale"
                 }
               >
                 ${course.tuition_fee || course.price}
@@ -116,15 +141,18 @@ export const Course = ({ course, type }) => {
                 <div className="left">
                   <button
                     className="btn-icon btn-icon-cs btn-like"
-                    onClick={() => setLiked(!liked)}
+                    onClick={() => handleWatchList(course)}
                   >
-                    {liked ? <AiFillHeart color="red" /> : <AiOutlineHeart />}
+                    <AiFillHeart color="red" />
                   </button>
                 </div>
               )}
               {type === "sale" && (
                 <div className="right">
-                  <button className="btn-icon btn-icon-cs btn-cart" onClick={()=>addToCart(course)}>
+                  <button
+                    className="btn-icon btn-icon-cs btn-cart"
+                    onClick={() => addToCart(course)}
+                  >
                     <FiShoppingCart />
                   </button>
                 </div>

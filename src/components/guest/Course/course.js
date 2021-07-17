@@ -61,15 +61,18 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
 };
 
 const VideoModal = (props) => {
-  const { handleClose, lecture, course } = props;
+  const { show, onHide, lecture, course } = props;
   const [link, setLink] = useState("");
 
   useEffect(() => {
     if (lecture && lecture.video && lecture.video.link) {
       setLink(lecture.video.link);
-      console.log(lecture.video.link);
     }
   }, [lecture]);
+
+  useEffect(() => {
+    setLink(null);
+  }, [show])
 
   
 
@@ -97,7 +100,7 @@ const VideoModal = (props) => {
       </Modal.Body>
      )}
       <Modal.Footer>
-        <button className="btn-cs btn-primary-cs" onClick={() => handleClose()}>
+        <button className="btn-cs btn-primary-cs" onClick={() => onHide()}>
           Close
         </button>
       </Modal.Footer>
@@ -233,13 +236,7 @@ function Course() {
     }
   }, [location]);
 
-  const handleShow = () => {
-    setShow(true);
-  };
 
-  const handleClose = () => {
-    setShow(false);
-  };
 
   const onShowPreview = (lecture) => {
     loadLesson(lecture.id);
@@ -337,8 +334,7 @@ function Course() {
     <>
       <VideoModal
         show={show}
-        handleShow={() => handleShow()}
-        handleClose={() => handleClose()}
+        onHide={()=>setShow(false)}
         lecture={lecture}
         course={course}
       />
@@ -525,7 +521,7 @@ function Course() {
         <div className="course-content">
           <div className="flex-between-center">
             <h3>Course Content</h3>
-            <small>{course.status === 1 ? "Full section" : "Updating"}</small>
+            <div>{course.status === 1 ? "Full section" : "Updating"}</div>
           </div>
           <Accordion defaultActiveKey="0" className="course-section">
             {chapters.chapters.length > 0 &&

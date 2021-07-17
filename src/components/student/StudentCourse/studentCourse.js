@@ -107,9 +107,7 @@ function StudentCourse() {
   const { store, dispatch } = useContext(appContext);
   const { auth } = useContext(authContext);
   const { user, role } = auth;
-  const [liked, setLiked] = useState(false);
   const [course, setCourse] = useState(null);
-  const [watchList, setWatchList] = useState([]);
   const location = useLocation();
   const history = useHistory();
   const [chapters, setChapters] = useState({
@@ -125,18 +123,11 @@ function StudentCourse() {
   const [show, setShow] = useState(false);
   const [lecture, setLecture] = useState(null);
   const { id } = useParams();
+  const [rating, setRating] = useState({
+    content: "Excellent course! Really satisfied!",
+    rating: 0,
+  });
 
-  useEffect(() => {
-    loadWatchList();
-  }, [user]);
-
-  useEffect(() => {
-    if (watchList.length > 0 && id && watchList.find((c) => c.id === id)) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-  }, [watchList, id]);
 
   const loadStudentCourse = async (id) => {
     const res = await request({
@@ -148,12 +139,12 @@ function StudentCourse() {
     }
   };
 
-  const loadChapters = async (id) => {
+  const loadChapters = async (id,page) => {
     const res = await request({
       method: "GET",
       url: `/courses/${id}/chapters`,
       params: {
-        page: chapters.page + 1,
+        page: page,
         limit: 10,
       },
     });
@@ -163,6 +154,7 @@ function StudentCourse() {
         page: res.pageNumber,
         totalPage: Math.floor(res.data.count / res.pageSize) + 1,
       });
+
     }
   };
 
@@ -194,26 +186,15 @@ function StudentCourse() {
     }
   };
 
-  const loadWatchList = async () => {
-    const res = await request({
-      method: "GET",
-      url: `/courses/watch-list`,
-    });
 
-    if (res.code) {
-      setWatchList(res.data.rows);
-    } else {
-      setWatchList([]);
-    }
-  };
 
   useEffect(() => {
     if (id) {
       loadStudentCourse(id);
-      loadChapters(id);
-      loadFeedbacks(id);
+      loadChapters(id,1);
+      // loadFeedbacks(id);
     }
-  }, [location]);
+  }, [id,location]);
 
 
   const onShowPreview = (lecture) => {
@@ -226,7 +207,8 @@ function StudentCourse() {
     if (lectures) {
       let total = 0;
       lectures.forEach((l) => {
-        total += l.duration;
+        if(l.video)
+        total += l.video.time;
       });
       return total;
     }
@@ -239,197 +221,139 @@ function StudentCourse() {
       <>
         <VideoModal
           show={show}
-          onHide={()=>setShow(false)}
+          onHide={() => setShow(false)}
           lecture={lecture}
           course={course}
         />
-        <div className="course-head">
-          <Row className="course-row-head">
-            <Col md="12" className="left">
-              <div>
-                <ImageCustom
-                  width="100%"
-                  className="card-25-9"
-                  src={course.picture}
-                />
-              </div>
-              <div className="course-info-head">
-                <div className="course-wrap-badge">
-                  {(course.isNew || course.isMostEnrolled) && (
-                    <span
-                      className={`card-badge course-badge ${
-                        course.isNew ? "new" : "best-seller"
-                      }`}
-                    >
-                      {course.isNew ? "New" : "Best seller"}
-                    </span>
-                  )}
-                </div>
-                <h3>
-                  <span>{course.course_name}</span>
-                </h3>
-                <div>{course.short_description || course.description}</div>
-                <div className="course-rating-head">
-                  <Rating
-                    emptySymbol={<TiStarOutline />}
-                    fullSymbol={<TiStarFullOutline />}
-                    readonly
-                    initialRating={course.rating}
-                    style={{ fontSize: "1.1rem", color: "#eb910a" }}
-                  />
-                  <small className="text-number">{` (${numeral(
-                    course.ratings || course.number_rating
-                  ).format("0,0")})`}</small>
-                </div>
-                <div>
-                  Teacher{" "}
-                  <Link className="" to={`/teacher?id=${course.teacher_id}`}>
-                    {course.teacher_name}
-                  </Link>
-                </div>
-                <div>
-                  Last updated:{" "}
-                  <span className="text-number">
-                    {course.last_update || moment(course.updateAt).format("L")}
-                  </span>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </div>
-        <div className="course-body">
-          <div className="course-content">
-            <div className="flex-between-center">
-              <h3>Course Content</h3>
-              <small>{course.status === 1 ? "Full section" : "Updating"}</small>
-            </div>
-            <Accordion defaultActiveKey="0" className="course-section">
-              {chapters.chapters.length > 0 &&
-                chapters.chapters.map((section, index) => {
-                  return (
-                    <Card key={index}>
-                      <Accordion.Toggle
-                        as={Card.Header}
-                        eventKey={index + 1}
-                        className="flex-between-center"
-                      >
-                        <div className="section-name">{`Section ${
-                          /*section.stt*/ index + 1
-                        }: ${/*section.name*/ section.chapter_name}`}</div>
-                        <div>{`${
-                          /*section.lectures.length ||*/ section.lessons.length
-                        } lectures • ${numeral(
-                          calcLecturesDurationTotal(
-                            /*section.lectures*/ section.lessons
-                          )
-                        ).format("00:00")}`}</div>
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index + 1}>
-                        <Lectures
-                          lectures={/*section.lectures*/ section.lessons}
-                          onShowPreview={onShowPreview}
-                          isPreview={true}
-                        />
-                      </Accordion.Collapse>
-                    </Card>
-                  );
-                })}
-            </Accordion>
-            {chapters.chapters.length === 0 && (
-              <div className="text-not-found">Content has not been updated</div>
-            )}
-            {chapters.page < chapters.totalPage && (
-              <div className="flex-center mt-2">
-                <button className="btn-cs btn-primary-cs">
-                  Show more contents
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="course-body">
-          <h3>Course Reviews</h3>
-          <div className="course-feedback">
-            <div className="flex-start-center">
-              <div className="course-rating-point">
-                <span className="text-rating-number">{course.rating}</span>
-                <Rating
-                  emptySymbol={<TiStarOutline />}
-                  fullSymbol={<TiStarFullOutline />}
-                  readonly
-                  initialRating={course.rating}
-                  style={{ fontSize: "1.1rem", color: "#eb910a" }}
-                />
-                <span>{"Course Rating"}</span>
-              </div>
-              <div className="course-rating-chart">
-                {/* <RatingChart chart={course.rating_chart} total={course.ratings} /> */}
-              </div>
-            </div>
-            <div className="course-review">
-              {
-                /*course.reviews &&*/
-                feedbacks.feedbacks.map((review, index) => {
-                  return (
-                    <div className="course-review-item" key={index}>
-                      <span className="course-wrap-review-img">
-                        <ImageCustom
-                          width="48px"
-                          height="48px"
-                          borderRadius="50%"
-                        />
-                      </span>
-                      <div className="">
-                        <div>
-                          {review.user_name || review.user
-                            ? review.user.fullname
-                            : ""}
-                        </div>
-                        <div>
-                          <Rating
-                            emptySymbol={<TiStarOutline />}
-                            fullSymbol={<TiStarFullOutline />}
-                            readonly
-                            initialRating={review.rating}
-                            style={{ fontSize: "1.1rem", color: "#eb910a" }}
-                          />{" "}
-                          <small>{`  ${moment(
-                            /*review.review_at*/
-                            review.updatedAt
-                          ).fromNow()}`}</small>
-                        </div>
-                        <div>{review.content}</div>
-                      </div>
+        <div className="row">
+          <div className="col-md-4">
+            <div className="course-head ">
+              <Row className="course-row-head">
+                <Col md="12" className="left">
+                  <div>
+                    <ImageCustom
+                      width="100%"
+                      className="card-25-9"
+                      src={course.picture}
+                    />
+                  </div>
+                  <div className="course-info-head">
+                    <div className="course-wrap-badge">
+                      {(course.isNew || course.isMostEnrolled) && (
+                        <span
+                          className={`card-badge course-badge ${
+                            course.isNew ? "new" : "best-seller"
+                          }`}
+                        >
+                          {course.isNew ? "New" : "Best seller"}
+                        </span>
+                      )}
                     </div>
-                  );
-                })
-              }
+                    <h5>
+                      <span>{course.course_name}</span>
+                    </h5>
+                    <div>
+                      Teacher{" "}
+                      <Link
+                        className=""
+                        to={`/teacher?id=${course.teacher_id}`}
+                      >
+                        {course.teacher_name}
+                      </Link>
+                    </div>
+                    <div>
+                      Last updated:{" "}
+                      <span className="text-number">
+                        {course.last_update ||
+                          moment(course.updateAt).format("L")}
+                      </span>
+                    </div>
+                    <h5 className="mt-3">Feedback</h5>
+                    <textarea
+                      className="textarea-feedback"
+                      name="feedback"
+                      rows="4"
+                      onChange={(e)=>setRating({...rating,content:e.target.value})}
+                    >
+                     {rating.content}
+                    </textarea>
+                    <div className="flex-between-center">
+                      <Rating
+                        emptySymbol={<TiStarOutline />}
+                        fullSymbol={<TiStarFullOutline />}
+                        initialRating={rating.rating}
+                        style={{ fontSize: "2rem", color: "#eb910a" }}
+                        onChange={(val)=>{setRating({...rating, rating: val})}}
+                      />
+                      <button className="btn-cs btn-primary-cs" onClick={() => {
+                        console.log(rating);
+                      }}>
+                        Post review
+                      </button>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
             </div>
-            {feedbacks.feedbacks.length > 0 &&
-              feedbacks.page < feedbacks.totalPage && (
-                <div className="flex-center mt-2">
-                  <button className="btn-cs btn-primary-cs">
-                    Show more reviews
-                  </button>
+          </div>
+          <div className="col-md-8">
+            <div className="course-body mt-0">
+              <div className="course-content">
+                <div className="flex-between-center">
+                  <h3>Course Content</h3>
+                  <div>
+                    {course.status === 1 ? "Full section" : "Updating"}
+                  </div>
                 </div>
-              )}
-            {feedbacks.feedbacks.length === 0 && (
-              <div className="flex-center mt-2">
-                <small></small>
+                <Accordion
+                  defaultActiveKey="0"
+                  className="course-section student-page"
+                >
+                  {chapters.chapters.length > 0 &&
+                    chapters.chapters.map((section, index) => {
+                      return (
+                        <Card key={index}>
+                          <Accordion.Toggle
+                            as={Card.Header}
+                            eventKey={index + 1}
+                            className="flex-between-center"
+                          >
+                            <div className="section-name">{`Section ${
+                              /*section.stt*/ index + 1
+                            }: ${/*section.name*/ section.chapter_name}`}</div>
+                            <div className="section-time">{`${
+                              /*section.lectures.length ||*/ section.lessons
+                                .length
+                            } lectures • ${numeral(
+                              calcLecturesDurationTotal(
+                                /*section.lectures*/ section.lessons
+                              )
+                            ).format("00:00")}`}</div>
+                          </Accordion.Toggle>
+                          <Accordion.Collapse eventKey={index + 1}>
+                            <Lectures
+                              lectures={/*section.lectures*/ section.lessons}
+                              onShowPreview={onShowPreview}
+                              isPreview={true}
+                            />
+                          </Accordion.Collapse>
+                        </Card>
+                      );
+                    })}
+                </Accordion>
+                {chapters.chapters.length === 0 && (
+                  <div className="text-not-found">
+                    Content has not been updated
+                  </div>
+                )}
+                {chapters.page < chapters.totalPage && (
+                  <div className="flex-center mt-2">
+                    <button className="btn-cs btn-primary-cs">
+                      Show more contents
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-            <h3>Feedback</h3>
-            <textarea className="textarea-feedback" name="feedback" rows="4">
-              Excellent course! Really satisfied!
-            </textarea>
-            <div className="flex-between-center">
-              <Rating
-                emptySymbol={<TiStarOutline />}
-                fullSymbol={<TiStarFullOutline />}
-                initialRating={5}
-                style={{ fontSize: "2rem", color: "#eb910a" }}
-              />
-              <button className="btn-cs btn-primary-cs">Post review</button>
             </div>
           </div>
         </div>

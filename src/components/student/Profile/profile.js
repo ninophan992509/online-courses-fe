@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import Avatar from "react-avatar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./profile.css";
 import numeral from "numeral";
 import { Course } from '../../guest/CourseList/courseList';
@@ -15,6 +15,7 @@ function Profile() {
   const { user } = auth;
   const [myCourses, setMyCourses] = useState([]);
   const [watchList, setWatchList] = useState([]);
+  const location = useLocation();
 
   useEffect(() => {
     if (user)
@@ -22,7 +23,7 @@ function Profile() {
       loadMyCourses();
       loadWatchList();
     }
-  }, [user]);
+  }, [user,location]);
   
   const loadMyCourses = async() => {
     const res = await request({

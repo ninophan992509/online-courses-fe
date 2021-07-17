@@ -5,3 +5,11 @@
     background-color:#e4e4e4;
     padding: .5rem;
 }
+
+.course-section.student-page .section-name{
+   font-size: 16px;
+}
+
+.section-time{
+    white-space: nowrap;
+}
