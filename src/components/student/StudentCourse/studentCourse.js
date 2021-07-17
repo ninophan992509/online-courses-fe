@@ -26,7 +26,7 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
   return (
     <div className="course-lecture">
       {lectures &&
-        lectures.map((lecture, index) => {
+        lectures.sort((a,b)=>a.number_order - b.number_order).map((lecture, index) => {
           return (
             <Card.Body
               key={index}
@@ -46,7 +46,7 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
                       : () => {}
                   }
                 >
-                  {lecture.name}
+                  {`Lesson ${lecture.number_order}: ${lecture.name}`}
                 </span>
                 <span>{numeral(lecture.duration).format("00:00")}</span>
               </span>
@@ -58,16 +58,18 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
 };
 
 const VideoModal = (props) => {
-  const { handleClose, lecture } = props;
-  const [link, setLink] = useState(
-    "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
-  );
+  const { show, onHide, lecture, course } = props;
+  const [link, setLink] = useState(null);
 
   useEffect(() => {
-    if (lecture) {
-      setLink(lecture.video);
+    if (lecture && lecture.video && lecture.video.link) {
+      setLink(lecture.video.link);
     }
   }, [lecture]);
+
+  useEffect(()=>{
+    setLink(null);
+  },[show]);
 
   return (
     <Modal
@@ -81,21 +83,19 @@ const VideoModal = (props) => {
           {lecture ? lecture.name : ""}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      {link && (
+       <Modal.Body>
         <Player
           playsInline
-          poster="/assets/poster.png"
-          src={
-            lecture
-              ? lecture.video
-              : `http://www.youtube.com/watch?v=FLGCGc7sAUw`
-          }
-        >
-          {/* <source src={lecture ? lecture.link :`http://www.youtube.com/watch?v=FLGCGc7sAUw`} /> */}
-        </Player>
+          autoPlay
+          poster={course.picture}
+          src={link}
+        />
       </Modal.Body>
+      )}
+     
       <Modal.Footer>
-        <button className="btn-cs btn-primary-cs" onClick={() => handleClose()}>
+        <button className="btn-cs btn-primary-cs" onClick={() => onHide()}>
           Close
         </button>
       </Modal.Footer>
@@ -215,16 +215,10 @@ function StudentCourse() {
     }
   }, [location]);
 
-  const handleShow = () => {
-    setShow(true);
-  };
-
-  const handleClose = () => {
-    setShow(false);
-  };
 
   const onShowPreview = (lecture) => {
     loadLesson(lecture.id);
+    // setLecture(lecture);
     setShow(true);
   };
 
@@ -245,9 +239,9 @@ function StudentCourse() {
       <>
         <VideoModal
           show={show}
-          handleShow={() => handleShow()}
-          handleClose={() => handleClose()}
+          onHide={()=>setShow(false)}
           lecture={lecture}
+          course={course}
         />
         <div className="course-head">
           <Row className="course-row-head">

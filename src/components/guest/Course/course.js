@@ -29,7 +29,7 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
   return (
     <div className="course-lecture">
       {lectures &&
-        lectures.map((lecture, index) => {
+        lectures.sort((a,b)=>a.number_order - b.number_order).map((lecture, index) => {
           return (
             <Card.Body
               key={index}
@@ -49,7 +49,7 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
                       : () => {}
                   }
                 >
-                  {lecture.name}
+                  {`Lesson ${lecture.number_order}: ${lecture.name}`}
                 </span>
                 <span>{numeral(lecture.duration).format("00:00")}</span>
               </span>
@@ -61,15 +61,17 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
 };
 
 const VideoModal = (props) => {
-  const { handleClose, lecture } = props;
+  const { handleClose, lecture, course } = props;
   const [link, setLink] = useState("");
 
   useEffect(() => {
-    if (lecture) {
-      setLink(lecture.video);
-      console.log(lecture.video);
+    if (lecture && lecture.video && lecture.video.link) {
+      setLink(lecture.video.link);
+      console.log(lecture.video.link);
     }
   }, [lecture]);
+
+  
 
   return (
     <Modal
@@ -77,23 +79,23 @@ const VideoModal = (props) => {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
-    >
+    > 
+    
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
           {lecture ? lecture.name : ""}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+       {link && (
+       <Modal.Body>
         <Player
           playsInline
-          poster="/assets/poster.png"
-          src={
-            lecture
-              ? lecture.video
-              : `http://www.youtube.com/watch?v=FLGCGc7sAUw`
-          }
+          poster={course.picture}
+          src={link}
+          autoPlay
         />
       </Modal.Body>
+     )}
       <Modal.Footer>
         <button className="btn-cs btn-primary-cs" onClick={() => handleClose()}>
           Close
@@ -241,6 +243,7 @@ function Course() {
 
   const onShowPreview = (lecture) => {
     loadLesson(lecture.id);
+    // setLecture(lecture);
     setShow(true);
   };
 
@@ -337,6 +340,7 @@ function Course() {
         handleShow={() => handleShow()}
         handleClose={() => handleClose()}
         lecture={lecture}
+        course={course}
       />
       <div className="course-head">
         <Row className="course-row-head">

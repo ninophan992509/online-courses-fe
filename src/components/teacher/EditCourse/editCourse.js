@@ -855,6 +855,7 @@ const AddVideo = ({ show, onHide, course, lesson}) => {
         setPreUrl(null);
       }
       setLink(null);
+      setOldLink(null);
       setUploading(false);
     }
   }, [show]);
@@ -901,8 +902,8 @@ const AddVideo = ({ show, onHide, course, lesson}) => {
           onHide();
           alert('Add video successfully');
           if(oldLink){
-deleteFileOnFirebase(oldLink);
-setOldLink(null);
+            deleteFileOnFirebase(oldLink);
+            setOldLink(null);
           }
           
         }
