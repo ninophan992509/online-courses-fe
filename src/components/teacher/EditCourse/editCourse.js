@@ -46,7 +46,6 @@ function EditCourse() {
   const [showEditChapter, setEditChapter] = useState(false);
   const [showEditLesson, setEditLesson] = useState(false);
   const [showAddVideo, setAddVideo] = useState(false);
-  const [delStatus, setDelStatus] = useState(0);
   const [oldPicture, setOldPicture] = useState(null);
   const [chapSl, setChapSl] = useState(null);
   const [lessonSl, setLessonSl] = useState(null);
@@ -201,7 +200,7 @@ function EditCourse() {
         alert("Update successfully");
         loadCourse(courseId);
         if (oldPicture) {
-          deleteFileOnFirebase(oldPicture, setDelStatus);
+          deleteFileOnFirebase(oldPicture);
           setOldPicture(null);
         }
       }
@@ -737,7 +736,7 @@ const EditLesson = ({
                   setLess({ ...less, number_order: e.target.value })
                 }
                 placeholder="Enter lesson number"
-                min="0"
+                min="1"
                 className="input-number"
               />
             </Form.Group>
@@ -762,6 +761,14 @@ const AddLesson = ({ show, onHide, chapterId, loadChapters, courseId }) => {
     chapterId: 0,
     number_order: 0,
   });
+
+  useEffect(()=>{
+   setLesson({
+    name: "",
+    chapterId: 0,
+    number_order: 0,
+  });
+  },[show]);
 
   useEffect(() => {
     setLesson({
@@ -818,7 +825,7 @@ const AddLesson = ({ show, onHide, chapterId, loadChapters, courseId }) => {
               setLesson({ ...lesson, number_order: e.target.value })
             }
             placeholder="Enter lesson number"
-            min="0"
+            min="1"
             className="input-number"
           />
         </Form.Group>
@@ -835,57 +842,92 @@ const AddLesson = ({ show, onHide, chapterId, loadChapters, courseId }) => {
 const AddVideo = ({ show, onHide, course, lesson}) => {
   const [video, setVideo] = useState(null);
   const [preUrl, setPreUrl] = useState(null);
+  const [link, setLink] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [oldLink, setOldLink]= useState(null);
+
+  useEffect(() => {
+    if (!show)
+    {
+      setVideo(null);
+      if (preUrl) {
+        URL.revokeObjectURL(preUrl);
+        setPreUrl(null);
+      }
+      setLink(null);
+      setUploading(false);
+    }
+  }, [show]);
 
   const loadVideo = async (id) => {
       const res = await request({
         method: "GET",
         url: `/lesson/${id}`,
       });
-      if (res.code) {
-        console.log(res);
+      if (res.code && res.data && res.data.video) {
+        setPreUrl(res.data.video.link);
+        setOldLink(res.data.video.link);
       }
   };
 
   useEffect(() => {
-    if (lesson)
-    {
+    if (lesson) {
       loadVideo(lesson.id);
     }
-  }, [lesson])
+  }, [lesson]);
+
+  useEffect(() => {
+    if (link && uploading) {
+      onAddVideo();
+      setUploading(false);
+    }
+  }, [link,uploading]);
 
   const onAddVideo = async () => {
-    if (lesson.name && lesson.number_order !== 0) {
+    
       try {
         const res = await request({
           method: "POST",
           url: "/video",
           data: {
-            lesson: +lesson.id,
+            lessonId: +lesson.id,
             title: "",
             description: "",
-            link: "",
-            time: 100,
+            link: link,
+            time: video.duration,
           },
         });
         if (res.code) {
           onHide();
+          alert('Add video successfully');
+          if(oldLink){
+deleteFileOnFirebase(oldLink);
+setOldLink(null);
+          }
+          
         }
       } catch (error) {
         alert("Error. Please try again!");
       }
-    } else {
-      if (!lesson.name) alert("You must be fill section name");
-      if (lesson.number_order === 0) alert("You must be fill lesson number");
-    }
   };
 
-  return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header className="title-heading">Change Video Lesson</Modal.Header>
-      <Modal.Body>
-        {preUrl && <Player playsInline poster={course.picture} src={preUrl} />}
+  const uploadVideo = () => {
+    if (video)
+    {
+      setUploading(true);
+      uploadFile(video, setLink);
+    } else {
+      alert('No video is selected!');
+    }
+  }
 
-        <button className="btn-cs btn-outline-cs">
+  return (
+    <Modal show={show} onHide={onHide} size="lg">
+      <Modal.Header className="title-heading">Change Video Lesson</Modal.Header>
+      <Modal.Body className="flex-column-center">
+        {preUrl && <Player playsInline autoPlay poster={course.picture} src={preUrl} />}
+
+        <button className="btn-cs btn-light-cs w-50 mt-3 btn-upload">
           <AiOutlineCloudUpload />
           Upload video
           <input
@@ -894,16 +936,21 @@ const AddVideo = ({ show, onHide, course, lesson}) => {
             id="videoInput"
             onChange={(e) => {
               if (e.target.files) {
-                setVideo(e.target.files[0]);
-                setPreUrl(URL.createObjectURL(e.target.files[0]));
+                const file = e.target.files[0];
+                if (file.size < 5 * 1000 * 1000) {
+                  setVideo(file);
+                  setPreUrl(URL.createObjectURL(file));
+                } else {
+                  alert("File too large! Upload file with size less than 5MB");
+                }
               }
             }}
           />
         </button>
       </Modal.Body>
       <Modal.Footer>
-        <button className="btn-cs btn-primary-cs" onClick={() => onAddVideo()}>
-          Add Video
+        <button className="btn-cs btn-primary-cs" onClick={() => uploadVideo()} disabled={uploading}>
+          { uploading ? (  <Spinner animation="border" variant="light" />) : <>Add Video</>}
         </button>
       </Modal.Footer>
     </Modal>
