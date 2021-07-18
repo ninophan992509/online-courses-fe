@@ -938,11 +938,11 @@ const AddVideo = ({ show, onHide, course, lesson}) => {
             onChange={(e) => {
               if (e.target.files) {
                 const file = e.target.files[0];
-                if (file.size < 5 * 1000 * 1000) {
+                if (file.size < 15 * 1000 * 1000) {
                   setVideo(file);
                   setPreUrl(URL.createObjectURL(file));
                 } else {
-                  alert("File too large! Upload file with size less than 5MB");
+                  alert("File too large! Upload file with size less than 15MB");
                 }
               }
             }}
