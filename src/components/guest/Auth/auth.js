@@ -3,7 +3,7 @@ import { Container, InputGroup, Tab, Nav } from "react-bootstrap";
 import { Link, useHistory, useParams, useLocation } from "react-router-dom";
 import "./auth.css";
 import { BiUser } from "react-icons/bi";
-import { RiLockPasswordLine } from "react-icons/ri";
+import { RiLockPasswordLine, RiKeyboardFill } from "react-icons/ri";
 import { HiOutlineMail } from "react-icons/hi";
 import FaceIcon from "../../../images/face-icon.svg";
 import GoogleIcon from "../../../images/google-icon.svg";
@@ -260,6 +260,8 @@ export function Register({ _ref }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [showOTP, setShowOTP] = useState(false);
+  const [otp, setOTP] = useState('');
 
   const [require, setRequire] = useState({
     lowercase: false,
@@ -415,6 +417,20 @@ export function Register({ _ref }) {
     }
   };
 
+  const onSubmitOTP = (e)=>{
+    e.preventDefault();
+    if(otp)
+    {
+       
+    }else{
+      setAlert({
+              type: "danger",
+              message: 'You must be fill otp',
+              input: "otp",
+      });
+    }
+  }
+
   return (
     <Container>
       <form className="flex-column-center py-3">
@@ -431,7 +447,9 @@ export function Register({ _ref }) {
               </span>
             </div>
           )}
-          <div className="wrap-form-input mb-3">
+          {!showOTP && (
+            <>
+            <div className="wrap-form-input mb-3">
             <BiUser className="input-icon" />
             <input
               className={
@@ -478,6 +496,34 @@ export function Register({ _ref }) {
               Create account
             </button>
           </div>
+            </>
+          )}
+          {showOTP && (
+            <>
+            <div className="wrap-form-input mb-3">
+            <RiKeyboardFill className="input-icon" />
+            <input
+              className={
+                alert.input === "otp"
+                  ? `input-append input-cs border-cs-${alert.type}`
+                  : `input-append input-cs`
+              }
+              type="text"
+              placeholder="Enter OTP"
+              onChange={(e) => setOTP(e.target.value)}
+            />
+          </div>
+          <div className="mt-2">
+            <button
+              className="btn-cs btn-primary-cs"
+              onClick={(e) => onSubmitOTP(e)}
+            >
+              Confirm
+            </button>
+          </div>
+            </>
+          )}
+          
         </div>
       </form>
 

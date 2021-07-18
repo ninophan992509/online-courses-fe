@@ -14,7 +14,7 @@ function CatList({ categories, title }) {
             categories.map((cat, index) => {
               return (
                 <li className="cat-item" key={index}>
-                  <Link className="cat-link" to={`/category?id=${cat.id}`}>
+                  <Link className="cat-link" to={`/courses/search?catId=${cat.id}`}>
                     <div className="cat-name">{cat.category_name}{` ${numeral(cat.number_enrolled).format("0,0")}`}</div>
                     <div className="cat-students">
                       <span>

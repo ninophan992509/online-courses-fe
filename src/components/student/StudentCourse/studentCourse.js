@@ -26,33 +26,35 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
   return (
     <div className="course-lecture">
       {lectures &&
-        lectures.sort((a,b)=>a.number_order - b.number_order).map((lecture, index) => {
-          return (
-            <Card.Body
-              key={index}
-              className={`course-lecture-item ${
-                lecture.preview || isPreview ? "preview" : ""
-              }`}
-            >
-              <span className="course-lecture-icon">
-                <RiVideoLine />
-              </span>
-              <span className="course-wrap-name">
-                <span
-                  className={`course-lecture-name`}
-                  onClick={
-                    lecture.preview || isPreview
-                      ? () => onShowPreview(lecture)
-                      : () => {}
-                  }
-                >
-                  {`Lesson ${lecture.number_order}: ${lecture.name}`}
+        lectures
+          .sort((a, b) => a.number_order - b.number_order)
+          .map((lecture, index) => {
+            return (
+              <Card.Body
+                key={index}
+                className={`course-lecture-item ${
+                  lecture.preview || isPreview ? "preview" : ""
+                }`}
+              >
+                <span className="course-lecture-icon">
+                  <RiVideoLine />
                 </span>
-                <span>{numeral(lecture.duration).format("00:00")}</span>
-              </span>
-            </Card.Body>
-          );
-        })}
+                <span className="course-wrap-name">
+                  <span
+                    className={`course-lecture-name`}
+                    onClick={
+                      lecture.preview || isPreview
+                        ? () => onShowPreview(lecture)
+                        : () => {}
+                    }
+                  >
+                    {`Lesson ${lecture.number_order}: ${lecture.name}`}
+                  </span>
+                  <span>{numeral(lecture.duration).format("00:00")}</span>
+                </span>
+              </Card.Body>
+            );
+          })}
     </div>
   );
 };
@@ -67,9 +69,9 @@ const VideoModal = (props) => {
     }
   }, [lecture]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setLink(null);
-  },[show]);
+  }, [show]);
 
   return (
     <Modal
@@ -84,16 +86,11 @@ const VideoModal = (props) => {
         </Modal.Title>
       </Modal.Header>
       {link && (
-       <Modal.Body>
-        <Player
-          playsInline
-          autoPlay
-          poster={course.picture}
-          src={link}
-        />
-      </Modal.Body>
+        <Modal.Body>
+          <Player playsInline autoPlay poster={course.picture} src={link} />
+        </Modal.Body>
       )}
-     
+
       <Modal.Footer>
         <button className="btn-cs btn-primary-cs" onClick={() => onHide()}>
           Close
@@ -128,7 +125,6 @@ function StudentCourse() {
     rating: 0,
   });
 
-
   const loadStudentCourse = async (id) => {
     const res = await request({
       method: "GET",
@@ -139,7 +135,7 @@ function StudentCourse() {
     }
   };
 
-  const loadChapters = async (id,page) => {
+  const loadChapters = async (id, page) => {
     const res = await request({
       method: "GET",
       url: `/courses/${id}/chapters`,
@@ -154,7 +150,6 @@ function StudentCourse() {
         page: res.pageNumber,
         totalPage: Math.floor(res.data.count / res.pageSize) + 1,
       });
-
     }
   };
 
@@ -186,16 +181,13 @@ function StudentCourse() {
     }
   };
 
-
-
   useEffect(() => {
     if (id) {
       loadStudentCourse(id);
-      loadChapters(id,1);
+      loadChapters(id, 1);
       // loadFeedbacks(id);
     }
-  }, [id,location]);
-
+  }, [id, location]);
 
   const onShowPreview = (lecture) => {
     loadLesson(lecture.id);
@@ -203,12 +195,36 @@ function StudentCourse() {
     setShow(true);
   };
 
+  const ratingCourse = async () => {
+    if (rating.content && rating.rating !== 0) {
+      try {
+        const res = await request({
+          url: "/feedbacks",
+          method: "POST",
+          data: {
+            courseId: +course.id,
+            title: "",
+            content: rating.content,
+            rating: rating.rating,
+          },
+        });
+
+        if (res.code) {
+          alert("Success");
+        }
+      } catch (error) {
+        alert("Error. Please try again");
+      }
+    } else {
+      alert("Please fill content and rate point to rate this course");
+    }
+  };
+
   const calcLecturesDurationTotal = (lectures) => {
     if (lectures) {
       let total = 0;
       lectures.forEach((l) => {
-        if(l.video)
-        total += l.video.time;
+        if (l.video) total += l.video.time;
       });
       return total;
     }
@@ -273,9 +289,11 @@ function StudentCourse() {
                       className="textarea-feedback"
                       name="feedback"
                       rows="4"
-                      onChange={(e)=>setRating({...rating,content:e.target.value})}
+                      onChange={(e) =>
+                        setRating({ ...rating, content: e.target.value })
+                      }
                     >
-                     {rating.content}
+                      {rating.content}
                     </textarea>
                     <div className="flex-between-center">
                       <Rating
@@ -283,11 +301,14 @@ function StudentCourse() {
                         fullSymbol={<TiStarFullOutline />}
                         initialRating={rating.rating}
                         style={{ fontSize: "2rem", color: "#eb910a" }}
-                        onChange={(val)=>{setRating({...rating, rating: val})}}
+                        onChange={(val) => {
+                          setRating({ ...rating, rating: val });
+                        }}
                       />
-                      <button className="btn-cs btn-primary-cs" onClick={() => {
-                        console.log(rating);
-                      }}>
+                      <button
+                        className="btn-cs btn-primary-cs"
+                        onClick={() => ratingCourse()}
+                      >
                         Post review
                       </button>
                     </div>
@@ -301,9 +322,7 @@ function StudentCourse() {
               <div className="course-content">
                 <div className="flex-between-center">
                   <h3>Course Content</h3>
-                  <div>
-                    {course.status === 1 ? "Full section" : "Updating"}
-                  </div>
+                  <div>{course.status === 1 ? "Full section" : "Updating"}</div>
                 </div>
                 <Accordion
                   defaultActiveKey="0"

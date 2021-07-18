@@ -380,12 +380,12 @@ function Header() {
                         <Link className="dropdown-item" to="/profile">
                           Profile
                         </Link>
-                        <Link className="dropdown-item" to="/watch-list">
+                        {/* <Link className="dropdown-item" to="/watch-list">
                           Watch List
                         </Link>
                         <Link className="dropdown-item" to="/student-courses">
                           My Courses
-                        </Link>
+                        </Link> */}
                       </>
                     )}
                     <Link
