@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Row, Col, Modal, Form } from "react-bootstrap";
 import Avatar from "react-avatar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import "./profile.css";
 import numeral from "numeral";
 import { Course } from '../../guest/CourseList/courseList';
@@ -28,6 +28,7 @@ function Profile() {
       loadWatchList();
     }
   }, [user,location]);
+
   
   const loadMyCourses = async() => {
     const res = await request({
@@ -55,17 +56,17 @@ function Profile() {
     }
   }
 
-  const loadUserInfo = async()=>{
+  const loadUserInfo = async(id)=>{
     try{
        const res = await request({
       method: "GET",
-      url: `/userInfo`,
+      url: `/users/${id}`,
       });
 
       if(res.code) 
       {
-        localStorage.setItem("userInfo", JSON.stringify(res.data.userInfo));
-        setUserInfo(res.data.userInfo);
+        localStorage.setItem("userInfo", JSON.stringify(res.data.data));
+        setUserInfo(res.data.data);
       }
       
     }catch(error)
@@ -143,6 +144,7 @@ function Profile() {
 
 const InfoModal = ({user, loadUserInfo, show, onHide})=>{
   const [name, setName]=  useState('');
+  const history = useHistory();
 
   useEffect(()=>{
     setName('');
@@ -160,7 +162,7 @@ const InfoModal = ({user, loadUserInfo, show, onHide})=>{
         try{
        const res = await request({
          method: "PUT",
-         url: `/user`,
+         url: `/users`,
          data:{
            fullname:name,
          }
@@ -168,7 +170,9 @@ const InfoModal = ({user, loadUserInfo, show, onHide})=>{
 
       if(res.code) 
       {
-        loadUserInfo();
+        localStorage.setItem("userInfo", JSON.stringify(res.data.data));
+        loadUserInfo(res.data.data.id);
+        onHide();
       }
       
     }catch(error)
@@ -225,9 +229,9 @@ const PasswordModal = ({user, show, onHide})=>{
         try{
        const res = await request({
          method: "PUT",
-         url: `/user`,
+         url: `/users`,
          data:{
-           old_password:oldPassword,
+           repassword:oldPassword,
            password,
          }
       });

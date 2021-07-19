@@ -64,6 +64,8 @@ export function Login({ _ref }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { auth, setAuth } = useContext(authContext);
+  const [showOTP, setShowOTP] = useState(false);
+  const [otp, setOTP] = useState('');
   const history = useHistory();
   const location = useLocation();
 
@@ -160,6 +162,16 @@ export function Login({ _ref }) {
         }
       } catch (error) {
         if (error.response && error.response.data) {
+          if(error.response.data.message === 'User not confirm, please check email and confirm account.')
+          {
+            setAlert({
+              type: "success",
+              message: `Your account has not been verified. Please check email ${email} and enter otp to login`,
+              input: "",
+            });
+            setShowOTP(true);
+            return;
+          }
             setAlert({
               type: "danger",
               message: error.response.data.message,
@@ -169,6 +181,47 @@ export function Login({ _ref }) {
       }
     }
   };
+
+   const onSubmitOTP = async(e)=>{
+    e.preventDefault();
+    if(otp)
+    {
+        try {
+          const res = await request({
+            url: "/auth/confirm",
+            method: "POST",
+            data: {
+              email,
+              otp: +otp,
+            },
+          });
+
+          if (res.code) {
+            setAlert({
+              type: "success",
+              message: `Verify successfully!`,
+              input: "",
+            });
+
+            setShowOTP(false);
+          }
+        } catch (error) {
+          if (error.response && error.response.data) {
+            setAlert({
+              type: "danger",
+              message: error.response.data.message,
+              input: "",
+            });
+          }
+        }
+    }else{
+      setAlert({
+              type: "danger",
+              message: 'You must be fill otp',
+              input: "otp",
+      });
+    }
+  }
 
   return (
     <Container>
@@ -185,7 +238,34 @@ export function Login({ _ref }) {
               </span>
             </div>
           )}
-          <div className="wrap-form-input mb-3">
+          {showOTP && (
+            <>
+              <div className="wrap-form-input mb-3">
+                <RiKeyboardFill className="input-icon" />
+                <input
+                  className={
+                    alert.input === "otp"
+                      ? `input-append input-cs border-cs-${alert.type}`
+                      : `input-append input-cs`
+                  }
+                  type="text"
+                  placeholder="Enter OTP"
+                  onChange={(e) => setOTP(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <button
+                  className="btn-cs btn-primary-cs"
+                  onClick={(e) => onSubmitOTP(e)}
+                >
+                  Confirm
+                </button>
+              </div>
+            </>
+          )}
+          {!showOTP && (
+            <>
+<div className="wrap-form-input mb-3">
             <BiUser className="input-icon" />
             <input
               className={
@@ -198,7 +278,7 @@ export function Login({ _ref }) {
               onChange={(e) => handleEmailInput(e)}
             />
           </div>
-          <div className="wrap-form-input mb-3">
+           <div className="wrap-form-input mb-3">
             <RiLockPasswordLine className="input-icon" />
             <input
               className={
@@ -211,7 +291,7 @@ export function Login({ _ref }) {
               onChange={(e) => handlePasswordInput(e)}
             />
           </div>
-          <div className="flex-between-center w-100 my-3">
+           <div className="flex-between-center w-100 my-3">
             <InputGroup className="input-check">
               <InputGroup.Checkbox aria-label="Remember me" />
               <InputGroup.Text>Remember me</InputGroup.Text>
@@ -229,6 +309,12 @@ export function Login({ _ref }) {
               Log In
             </button>
           </div>
+            </>
+          )}
+          
+         
+         
+          
         </div>
       </form>
       {_ref !== "admin" && (
@@ -374,9 +460,11 @@ export function Register({ _ref }) {
         if (res.code) {
           setAlert({
             type: "success",
-            message: "Register successfully",
+            message: `OTP has send to email ${email}. Please check and fill OTP`,
             input: "",
           });
+
+          setShowOTP(true);
         }
       } catch (error) {
         if (error.response && error.response.data) {
@@ -417,11 +505,38 @@ export function Register({ _ref }) {
     }
   };
 
-  const onSubmitOTP = (e)=>{
+  const onSubmitOTP = async(e)=>{
     e.preventDefault();
     if(otp)
     {
-       
+        try {
+          const res = await request({
+            url: "/auth/confirm",
+            method: "POST",
+            data: {
+              email,
+              otp: +otp,
+            },
+          });
+
+          if (res.code) {
+            setAlert({
+              type: "success",
+              message: `Register successfully`,
+              input: "",
+            });
+
+            setShowOTP(false);
+          }
+        } catch (error) {
+          if (error.response && error.response.data) {
+            setAlert({
+              type: "danger",
+              message: error.response.data.message,
+              input: "",
+            });
+          }
+        }
     }else{
       setAlert({
               type: "danger",
@@ -449,97 +564,98 @@ export function Register({ _ref }) {
           )}
           {!showOTP && (
             <>
-            <div className="wrap-form-input mb-3">
-            <BiUser className="input-icon" />
-            <input
-              className={
-                alert.input === "name"
-                  ? `input-append input-cs border-cs-${alert.type}`
-                  : `input-append input-cs`
-              }
-              type="text"
-              placeholder="Your name"
-              onChange={(e) => handleNameInput(e)}
-            />
-          </div>
-          <div className="wrap-form-input mb-3">
-            <HiOutlineMail className="input-icon" />
-            <input
-              className={
-                alert.input === "email"
-                  ? `input-append input-cs border-cs-${alert.type}`
-                  : `input-append input-cs`
-              }
-              type="text"
-              placeholder="Your email"
-              onChange={(e) => handleEmailInput(e)}
-            />
-          </div>
-          <div className="wrap-form-input mb-3">
-            <RiLockPasswordLine className="input-icon" />
-            <input
-              className={
-                alert.input === "password"
-                  ? `input-append input-cs border-cs-${alert.type}`
-                  : `input-append input-cs`
-              }
-              type="password"
-              placeholder="Your password"
-              onChange={(e) => handlePasswordInput(e)}
-            />
-          </div>
-          <div className="mt-2">
-            <button
-              className="btn-cs btn-primary-cs"
-              onClick={(e) => handleSubmit(e)}
-            >
-              Create account
-            </button>
-          </div>
+              <div className="wrap-form-input mb-3">
+                <BiUser className="input-icon" />
+                <input
+                  className={
+                    alert.input === "name"
+                      ? `input-append input-cs border-cs-${alert.type}`
+                      : `input-append input-cs`
+                  }
+                  type="text"
+                  placeholder="Your name"
+                  onChange={(e) => handleNameInput(e)}
+                />
+              </div>
+              <div className="wrap-form-input mb-3">
+                <HiOutlineMail className="input-icon" />
+                <input
+                  className={
+                    alert.input === "email"
+                      ? `input-append input-cs border-cs-${alert.type}`
+                      : `input-append input-cs`
+                  }
+                  type="text"
+                  placeholder="Your email"
+                  onChange={(e) => handleEmailInput(e)}
+                />
+              </div>
+              <div className="wrap-form-input mb-3">
+                <RiLockPasswordLine className="input-icon" />
+                <input
+                  className={
+                    alert.input === "password"
+                      ? `input-append input-cs border-cs-${alert.type}`
+                      : `input-append input-cs`
+                  }
+                  type="password"
+                  placeholder="Your password"
+                  onChange={(e) => handlePasswordInput(e)}
+                />
+              </div>
+              <div className="mt-2">
+                <button
+                  className="btn-cs btn-primary-cs"
+                  onClick={(e) => handleSubmit(e)}
+                >
+                  Create account
+                </button>
+              </div>
             </>
           )}
           {showOTP && (
             <>
-            <div className="wrap-form-input mb-3">
-            <RiKeyboardFill className="input-icon" />
-            <input
-              className={
-                alert.input === "otp"
-                  ? `input-append input-cs border-cs-${alert.type}`
-                  : `input-append input-cs`
-              }
-              type="text"
-              placeholder="Enter OTP"
-              onChange={(e) => setOTP(e.target.value)}
-            />
-          </div>
-          <div className="mt-2">
-            <button
-              className="btn-cs btn-primary-cs"
-              onClick={(e) => onSubmitOTP(e)}
-            >
-              Confirm
-            </button>
-          </div>
+              
+              <div className="wrap-form-input mb-3">
+                <RiKeyboardFill className="input-icon" />
+                <input
+                  className={
+                    alert.input === "otp"
+                      ? `input-append input-cs border-cs-${alert.type}`
+                      : `input-append input-cs`
+                  }
+                  type="text"
+                  placeholder="Enter OTP"
+                  onChange={(e) => setOTP(e.target.value)}
+                />
+              </div>
+              <div className="mt-2">
+                <button
+                  className="btn-cs btn-primary-cs"
+                  onClick={(e) => onSubmitOTP(e)}
+                >
+                  Confirm
+                </button>
+              </div>
             </>
           )}
-          
         </div>
       </form>
-
-      <div className="social-login">
-        <div className="social-login-label">
-          <span className="label-text">or register with</span>
+      {!showOTP && (
+        <div className="social-login">
+          <div className="social-login-label">
+            <span className="label-text">or register with</span>
+          </div>
+          <div className="flex-center w-100 social-btn">
+            <button className="btn-icon btn-face">
+              <img alt="facebook" src={FaceIcon} />
+            </button>
+            <button className="btn-icon btn-gg">
+              <img alt="google" src={GoogleIcon} />
+            </button>
+          </div>
         </div>
-        <div className="flex-center w-100 social-btn">
-          <button className="btn-icon btn-face">
-            <img alt="facebook" src={FaceIcon} />
-          </button>
-          <button className="btn-icon btn-gg">
-            <img alt="google" src={GoogleIcon} />
-          </button>
-        </div>
-      </div>
+      )}
     </Container>
   );
 }

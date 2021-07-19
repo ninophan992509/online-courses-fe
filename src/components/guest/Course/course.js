@@ -334,7 +334,7 @@ function Course() {
     <>
       <VideoModal
         show={show}
-        onHide={()=>setShow(false)}
+        onHide={() => setShow(false)}
         lecture={lecture}
         course={course}
       />
@@ -395,14 +395,14 @@ function Course() {
                 </span>
               </div>
               <div className="flex-start-center course-price">
-                {(course.sale_price || +course.sale !== 0) && (
+                {(course.sale_price || +course.sale !== -1) && (
                   <span className="card-sale">
                     ${course.sale_price || course.sale}
                   </span>
                 )}
                 <span
                   className={
-                    course.sale_price || +course.sale !== 0
+                    course.sale_price || +course.sale !== -1
                       ? "card-price"
                       : "card-sale"
                   }

@@ -121,14 +121,16 @@ export const Course = ({ course, type }) => {
           </div>
           {type === "sale" && (
             <div className="flex-end-center">
-              {(course.sale_price || +course.sale !== 0) && (
+              {(course.sale_price || +course.sale !== -1) && (
                 <span className="card-sale">
                   ${course.sale || course.sale_price}
                 </span>
               )}
               <span
                 className={
-                  course.sale || course.sale_price ? "card-price" : "card-sale"
+                  +course.sale !== -1 || course.sale_price
+                    ? "card-price"
+                    : "card-sale"
                 }
               >
                 ${course.tuition_fee || course.price}
