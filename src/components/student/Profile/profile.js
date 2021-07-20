@@ -4,11 +4,10 @@ import Avatar from "react-avatar";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import "./profile.css";
 import numeral from "numeral";
-import { Course } from '../../guest/CourseList/courseList';
+import { Course } from "../../guest/CourseList/courseList";
 import { authContext } from "../../../contexts/AuthContext";
 import { _courses } from "../../guest/HomePage/data";
 import request from "../../../configs/request";
-
 
 function Profile() {
   const { auth } = useContext(authContext);
@@ -21,16 +20,14 @@ function Profile() {
   const location = useLocation();
 
   useEffect(() => {
-    if (user)
-    {
+    if (user) {
       setUserInfo(user);
       loadMyCourses();
       loadWatchList();
     }
-  }, [user,location]);
+  }, [user, location]);
 
-  
-  const loadMyCourses = async() => {
+  const loadMyCourses = async () => {
     const res = await request({
       method: "GET",
       url: `/courses/enrolled`,
@@ -41,8 +38,8 @@ function Profile() {
     } else {
       alert("Lối. Hãy thử lại");
     }
-  }
-  
+  };
+
   const loadWatchList = async () => {
     const res = await request({
       method: "GET",
@@ -54,26 +51,23 @@ function Profile() {
     } else {
       alert("Lối. Hãy thử lại");
     }
-  }
+  };
 
-  const loadUserInfo = async(id)=>{
-    try{
-       const res = await request({
-      method: "GET",
-      url: `/users/${id}`,
+  const loadUserInfo = async (id) => {
+    try {
+      const res = await request({
+        method: "GET",
+        url: `/users/${id}`,
       });
 
-      if(res.code) 
-      {
+      if (res.code) {
         localStorage.setItem("userInfo", JSON.stringify(res.data.data));
         setUserInfo(res.data.data);
       }
-      
-    }catch(error)
-    {
-      alert('Error. Please try again');
+    } catch (error) {
+      alert("Error. Please try again");
     }
-  }
+  };
 
   return (
     <>
@@ -87,10 +81,16 @@ function Profile() {
                 <b>{userInfo.email}</b>
               </h5>
               <div>@{userInfo.fullname}</div>
-              <button className="btn-cs btn-primary-cs mt-3 w-100" onClick={()=>setShowEdit(true)}>
+              <button
+                className="btn-cs btn-primary-cs mt-3 w-100"
+                onClick={() => setShowEdit(true)}
+              >
                 Edit Info
               </button>
-              <button className="btn-cs btn-primary-cs mt-3 w-100" onClick={()=>setShowPassword(true)}>
+              <button
+                className="btn-cs btn-primary-cs mt-3 w-100"
+                onClick={() => setShowPassword(true)}
+              >
                 Change Password
               </button>
             </div>
@@ -133,163 +133,161 @@ function Profile() {
               )}
             </div>
           </Col>
-          <InfoModal user={userInfo} show={showEdit} onHide={()=>setShowEdit(false)} loadUserInfo={loadUserInfo} />
-          <PasswordModal user={userInfo} show={showPassword} onHide={()=>setShowPassword(false)} />
+          <InfoModal
+            user={user}
+            show={showEdit}
+            onHide={() => setShowEdit(false)}
+            loadUserInfo={loadUserInfo}
+          />
+          <PasswordModal
+            user={userInfo}
+            show={showPassword}
+            onHide={() => setShowPassword(false)}
+          />
         </Row>
       )}
     </>
   );
 }
 
-
-const InfoModal = ({user, loadUserInfo, show, onHide})=>{
-  const [name, setName]=  useState('');
+export const InfoModal = ({ user, loadUserInfo, show, onHide }) => {
+  const [name, setName] = useState("");
   const history = useHistory();
 
-  useEffect(()=>{
-    setName('');
-  },[show]);
+  useEffect(() => {
+    if (user) {
+      setName(user.fullname);
+    }
+  }, [user]);
 
-  useEffect(()=>{
-   setName(user.fullname);
-  },[user]);
-
-
-  const editUser = async(e)=>{
+  const editUser = async (e) => {
     e.preventDefault();
-    if(name)
-    {
-        try{
-       const res = await request({
-         method: "PUT",
-         url: `/users`,
-         data:{
-           fullname:name,
-         }
-      });
+    if (name) {
+      try {
+        const res = await request({
+          method: "PUT",
+          url: `/users`,
+          data: {
+            fullname: name,
+          },
+        });
 
-      if(res.code) 
-      {
-        localStorage.setItem("userInfo", JSON.stringify(res.data.data));
-        loadUserInfo(res.data.data.id);
-        onHide();
+        if (res.code) {
+          localStorage.setItem("userInfo", JSON.stringify(res.data.data));
+          loadUserInfo(res.data.data.id);
+          onHide();
+        }
+      } catch (error) {
+        alert("Error. Please try again");
       }
-      
-    }catch(error)
-    {
-      alert('Error. Please try again');
+    } else {
+      alert("You must be fill your name");
     }
-    }else{
-      alert('You must be fill your name');
-    }
-    
-  }
+  };
 
-
-  return(
+  return (
     <Modal show={show} onHide={onHide} size="lg">
-       <Modal.Header className="title-heading">
-          Edit Profile
-       </Modal.Header>
-       <Modal.Body>
-           {user && (
-             <>
-              <Form.Group className="w-100">
-            <Form.Label>Your name</Form.Label>
-            <Form.Control
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-            />
-          </Form.Group>
-          <div className="mt-3 flex-end-center">
-              <button className="btn-cs btn-primary-cs" onClick={(e)=>editUser(e)}>Update</button>
-          </div>
+      <Modal.Header className="title-heading">Edit Profile</Modal.Header>
+      <Modal.Body>
+        {user && (
+          <>
+            <Form.Group className="w-100">
+              <Form.Label>Your name</Form.Label>
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+              />
+            </Form.Group>
+            <div className="mt-3 flex-end-center">
+              <button
+                className="btn-cs btn-primary-cs"
+                onClick={(e) => editUser(e)}
+              >
+                Update
+              </button>
+            </div>
           </>
         )}
-       </Modal.Body>
+      </Modal.Body>
     </Modal>
-  )
-}
+  );
+};
 
-const PasswordModal = ({user, show, onHide})=>{
-  const [password, setPassword]=  useState('');
-  const [oldPassword, setOldPassword]=  useState('');
+const PasswordModal = ({ user, show, onHide }) => {
+  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
 
-  useEffect(()=>{
-    setOldPassword('');
-    setPassword('');
-  },[show]);
+  useEffect(() => {
+    setOldPassword("");
+    setPassword("");
+  }, [show]);
 
-  const editUser = async(e)=>{
+  const editUser = async (e) => {
     e.preventDefault();
-    if(password && oldPassword)
-    {
-        try{
-       const res = await request({
-         method: "PUT",
-         url: `/users`,
-         data:{
-           repassword:oldPassword,
-           password,
-         }
-      });
+    if (password && oldPassword) {
+      try {
+        const res = await request({
+          method: "PUT",
+          url: `/users`,
+          data: {
+            repassword: oldPassword,
+            password,
+          },
+        });
 
-      if(res.code) 
-      {
-        alert('Success');
-        onHide();
+        if (res.code) {
+          alert("Success");
+          onHide();
+        }
+      } catch (error) {
+        alert("Error. Please try again");
       }
-      
-    }catch(error)
-    {
-      alert('Error. Please try again');
-    }
-    }else{
-      if(!password)
-        alert('You must be fill new password'); 
-        
-      if(!oldPassword)
-        alert('You must be fill old password');
-    }
-    
-  }
+    } else {
+      if (!password) alert("You must be fill new password");
 
-  return(
+      if (!oldPassword) alert("You must be fill old password");
+    }
+  };
+
+  return (
     <Modal show={show} onHide={onHide} size="lg">
-       <Modal.Header className="title-heading">
-          ChangePassword
-       </Modal.Header>
-       <Modal.Body>
-           {user && (
-             <Form>
+      <Modal.Header className="title-heading">ChangePassword</Modal.Header>
+      <Modal.Body>
+        {user && (
+          <Form>
             <Form.Group className="w-100">
-            <Form.Label>Old Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              placeholder="Enter your old password"
-            />
-          </Form.Group>
-          <Form.Group className="w-100">
-            <Form.Label>New Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your new password"
-            />
-          </Form.Group>
-          <div className="mt-3 flex-end-center">
-              <button className="btn-cs btn-primary-cs" onClick={(e)=>editUser(e)}>Update</button>
-          </div>
+              <Form.Label>Old Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="Enter your old password"
+              />
+            </Form.Group>
+            <Form.Group className="w-100">
+              <Form.Label>New Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your new password"
+              />
+            </Form.Group>
+            <div className="mt-3 flex-end-center">
+              <button
+                className="btn-cs btn-primary-cs"
+                onClick={(e) => editUser(e)}
+              >
+                Update
+              </button>
+            </div>
           </Form>
         )}
-       </Modal.Body>
+      </Modal.Body>
     </Modal>
-  )
-}
+  );
+};
 
 export default Profile;

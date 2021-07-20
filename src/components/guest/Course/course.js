@@ -69,11 +69,6 @@ const VideoModal = (props) => {
       setLink(lecture.video.link);
     }
   }, [lecture]);
-
-  useEffect(() => {
-    setLink(null);
-  }, [show])
-
   
 
   return (
@@ -133,7 +128,11 @@ function Course() {
   const { id } = useParams();
 
   useEffect(() => {
-    loadWatchList();
+    if(user)
+    {
+      loadWatchList();
+    }
+    
   }, [user]);
 
   // useEffect(() => {
@@ -239,8 +238,11 @@ function Course() {
 
 
   const onShowPreview = (lecture) => {
-    loadLesson(lecture.id);
-    // setLecture(lecture);
+    
+    // if (user)
+    //   loadLesson(lecture.id);
+    // else
+      setLecture(lecture);
     setShow(true);
   };
 

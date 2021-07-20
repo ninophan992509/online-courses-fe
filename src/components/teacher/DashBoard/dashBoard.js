@@ -12,6 +12,7 @@ import request from "../../../configs/request";
 import ImageCustom from "../../guest/ImageCustom/imageCustom";
 import AddCourse from "../AddCourse/addCourse";
 import "./dashBoard.css";
+import { InfoModal } from "../../student/Profile/profile";
 
 const Course = ({ course }) => {
   const history = useHistory();
@@ -87,12 +88,32 @@ function DashBoard() {
   const { user } = auth;
   const [course, setCourses] = useState([]);
   const [show, setShow] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const history = useHistory();
+  const [userInfo, setUserInfo] = useState(null);
+
   useEffect(() => {
     if (user) {
       loadMyCourses();
+      setUserInfo(user);
     }
   }, [user]);
+
+  const loadUserInfo = async (id) => {
+    try {
+      const res = await request({
+        method: "GET",
+        url: `/users/${id}`,
+      });
+
+      if (res.code) {
+        localStorage.setItem("userInfo", JSON.stringify(res.data.data));
+        setUserInfo(res.data.data);
+      }
+    } catch (error) {
+      alert("Error. Please try again");
+    }
+  };
 
   const loadMyCourses = async () => {
     const res = await request({
@@ -110,24 +131,32 @@ function DashBoard() {
 
   return (
     <>
-      {user && (
+      {userInfo && (
         <Row>
           <Col md={4} sm={12}>
             <div className="course-body">
               <h3>Teacher Profile</h3>
-              <Avatar name={user.email} size="100" round="4px" />
+              <Avatar name={userInfo.email} size="100" round="4px" />
               <h5 className="mt-2">
-                <b>{user.email}</b>
+                <b>{userInfo.email}</b>
               </h5>
-              <div>@{user.fullname}</div>
-              <button className="btn-cs btn-primary-cs mt-3 w-100">
+              <div>@{userInfo.fullname}</div>
+              <button
+                className="btn-cs btn-primary-cs mt-3 w-100"
+                onClick={() => setShowEdit(true)}
+              >
                 Edit Info
               </button>
             </div>
           </Col>
           <Col md={8} sm={12}>
             <div className="course-body">
-              <Modal className="modal-add" show={show} onHide={() => setShow(false)} size="lg">
+              <Modal
+                className="modal-add"
+                show={show}
+                onHide={() => setShow(false)}
+                size="lg"
+              >
                 <AddCourse />
               </Modal>
               <div className="flex-between-center">
@@ -160,6 +189,12 @@ function DashBoard() {
               )}
             </div>{" "}
           </Col>
+          <InfoModal
+            user={user}
+            show={showEdit}
+            onHide={() => setShowEdit(false)}
+            loadUserInfo={loadUserInfo}
+          />
         </Row>
       )}
     </>
