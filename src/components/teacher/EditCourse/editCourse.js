@@ -273,6 +273,20 @@ function EditCourse() {
       alert("Error. Please try again");
     }
   };
+  
+  const onDeleteLesson = async (id) => {
+    try {
+      const res = await request({
+        url: `/lesson/${id}`,
+        method: "DELETE",
+      });
+      if (res.code) {
+        loadChapters(courseId, 1);
+      }
+    } catch (error) {
+      alert("Error. Please try again");
+    }
+  };
 
   return (
     <div className="row flex-between-center">
@@ -473,7 +487,7 @@ function EditCourse() {
                                 </button>
                                 <button
                                   className="btn-cs btn-light-cs"
-                                  onClick={() => onDeleteChapter(chapter.id)}
+                                  onClick={() => onDeleteLesson(lesson.id)}
                                 >
                                   <TiDelete />
                                 </button>
@@ -938,11 +952,11 @@ const AddVideo = ({ show, onHide, course, lesson}) => {
             onChange={(e) => {
               if (e.target.files) {
                 const file = e.target.files[0];
-                if (file.size < 15 * 1000 * 1000) {
+                if (file.size < 30 * 1000 * 1000) {
                   setVideo(file);
                   setPreUrl(URL.createObjectURL(file));
                 } else {
-                  alert("File too large! Upload file with size less than 15MB");
+                  alert("File too large! Upload file with size less than 30MB");
                 }
               }
             }}

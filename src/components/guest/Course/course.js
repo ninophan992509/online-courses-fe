@@ -29,33 +29,35 @@ const Lectures = ({ lectures, onShowPreview, isPreview }) => {
   return (
     <div className="course-lecture">
       {lectures &&
-        lectures.sort((a,b)=>a.number_order - b.number_order).map((lecture, index) => {
-          return (
-            <Card.Body
-              key={index}
-              className={`course-lecture-item ${
-                lecture.preview || isPreview ? "preview" : ""
-              }`}
-            >
-              <span className="course-lecture-icon">
-                <RiVideoLine />
-              </span>
-              <span className="course-wrap-name">
-                <span
-                  className={`course-lecture-name`}
-                  onClick={
-                    lecture.preview || isPreview
-                      ? () => onShowPreview(lecture)
-                      : () => {}
-                  }
-                >
-                  {`Lesson ${lecture.number_order}: ${lecture.name}`}
+        lectures
+          .sort((a, b) => a.number_order - b.number_order)
+          .map((lecture, index) => {
+            return (
+              <Card.Body
+                key={index}
+                className={`course-lecture-item ${
+                  lecture.preview || isPreview ? "preview" : ""
+                }`}
+              >
+                <span className="course-lecture-icon">
+                  <RiVideoLine />
                 </span>
-                <span>{numeral(lecture.duration).format("00:00")}</span>
-              </span>
-            </Card.Body>
-          );
-        })}
+                <span className="course-wrap-name">
+                  <span
+                    className={`course-lecture-name`}
+                    onClick={
+                      lecture.preview || isPreview
+                        ? () => onShowPreview(lecture)
+                        : () => {}
+                    }
+                  >
+                    {`Lesson ${lecture.number_order}: ${lecture.name}`}
+                  </span>
+                  <span>{numeral(lecture.duration).format("00:00")}</span>
+                </span>
+              </Card.Body>
+            );
+          })}
     </div>
   );
 };
@@ -69,7 +71,6 @@ const VideoModal = (props) => {
       setLink(lecture.video.link);
     }
   }, [lecture]);
-  
 
   return (
     <Modal
@@ -77,23 +78,17 @@ const VideoModal = (props) => {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
-    > 
-    
+    >
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
           {lecture ? lecture.name : ""}
         </Modal.Title>
       </Modal.Header>
-       {link && (
-       <Modal.Body>
-        <Player
-          playsInline
-          poster={course.picture}
-          src={link}
-          autoPlay
-        />
-      </Modal.Body>
-     )}
+      {link && (
+        <Modal.Body>
+          <Player playsInline poster={course.picture} src={link} autoPlay />
+        </Modal.Body>
+      )}
       <Modal.Footer>
         <button className="btn-cs btn-primary-cs" onClick={() => onHide()}>
           Close
@@ -128,11 +123,9 @@ function Course() {
   const { id } = useParams();
 
   useEffect(() => {
-    if(user)
-    {
+    if (user) {
       loadWatchList();
     }
-    
   }, [user]);
 
   // useEffect(() => {
@@ -235,14 +228,11 @@ function Course() {
     }
   }, [location]);
 
-
-
   const onShowPreview = (lecture) => {
-    
     // if (user)
     //   loadLesson(lecture.id);
     // else
-      setLecture(lecture);
+    setLecture(lecture);
     setShow(true);
   };
 
@@ -308,8 +298,7 @@ function Course() {
 
   const handleWatchList = async (course) => {
     if (!user || role !== "student") {
-      history.push({
-        pathname: `/auth?_ref=student`,
+      history.push(`/auth?_ref=student`, {
         state: { from: location.pathname },
       });
     } else {

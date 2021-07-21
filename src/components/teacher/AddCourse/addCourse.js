@@ -8,7 +8,7 @@ import "./addCourse.css";
 import { useLoadCategories } from "../../guest/Header/useLoadCategories";
 import request from "../../../configs/request";
 
-function AddCourse() {
+function AddCourse({onHide, loadCourses}) {
   const [newCourse, setNewCourse] = useState({
     course_name: "",
     short_description: "",
@@ -54,7 +54,12 @@ function AddCourse() {
         });
 
         if (res.code) {
-          history.push("/dashboard");
+          if (onHide && loadCourses)
+          {
+            onHide();
+            loadCourses();
+          }
+          // history.push("/dashboard");
         } 
       } catch (error) {
         alert('Error. Please try again');
@@ -224,6 +229,8 @@ function AddCourse() {
             <Form.Label>Tuition Fee</Form.Label>
             <Form.Control
               type="number"
+              className="input-number"
+              min="1"
               value={newCourse.tuition_fee}
               onChange={(e) => onChangeValue(e, "tuition_fee")}
               placeholder="20"

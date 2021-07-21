@@ -157,7 +157,7 @@ function DashBoard() {
                 onHide={() => setShow(false)}
                 size="lg"
               >
-                <AddCourse />
+                <AddCourse onHide={() => setShow(false)} loadCourses={loadMyCourses}/>
               </Modal>
               <div className="flex-between-center">
                 <h3>My Courses</h3>
