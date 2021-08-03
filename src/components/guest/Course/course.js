@@ -388,7 +388,10 @@ function Course() {
               <div className="flex-start-center course-price">
                 {(course.sale_price || +course.sale !== -1) && (
                   <span className="card-sale">
-                    ${course.sale_price || course.sale}
+                    $
+                    {course.sale === 0
+                      ? "Free"
+                      : course.sale_price || course.sale}
                   </span>
                 )}
                 <span
