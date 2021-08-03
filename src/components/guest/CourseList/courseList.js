@@ -9,7 +9,7 @@ import "./courseList.css";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { FiShoppingCart } from "react-icons/fi";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { AiFillHeart } from "react-icons/ai";
 import { TiStarOutline, TiStarFullOutline } from "react-icons/ti";
 import { responsive } from "../../../configs/carousel-responsive";
 import Rating from "react-rating";
@@ -123,7 +123,10 @@ export const Course = ({ course, type }) => {
             <div className="flex-end-center">
               {(course.sale_price || +course.sale !== -1) && (
                 <span className="card-sale">
-                  ${course.sale || course.sale_price}
+                  $
+                  {course.sale === 0
+                    ? "Free"
+                    : course.sale || course.sale_price}
                 </span>
               )}
               <span
