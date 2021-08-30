@@ -442,7 +442,7 @@ function Course() {
                   <div>{course.teacher_expert}</div>
                 </div>
               </div>
-              <Table className="table-info-teacher">
+              {/* <Table className="table-info-teacher">
                 <tbody>
                   <tr>
                     <td>
@@ -489,7 +489,7 @@ function Course() {
                     </td>
                   </tr>
                 </tbody>
-              </Table>
+              </Table> */}
               <div>
                 <h3>About Instructor</h3>
                 <p>{course.teacher_description}</p>
